@@ -1,12 +1,21 @@
 package com.musicmachine.service;
 
+import com.musicmachine.repository.MusicRepository;
 import javafx.application.Platform;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
 public class MusicService {
+
+    private MusicRepository musicRepository;
+
+    @Autowired
+    public MusicService(MusicRepository musicRepository) {
+        this.musicRepository = musicRepository;
+    }
 
     private ArrayList<String> authors = new ArrayList<>();
     private ArrayList<String> albums = new ArrayList<>();
