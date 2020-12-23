@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.musicmachine.MyController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.musicmachine.controller.MyController">
    <children>
       <Label alignment="CENTER" layoutX="347.0" layoutY="23.0" prefHeight="17.0" prefWidth="1014.0" text="Music maschine" textAlignment="CENTER" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
          <font>
@@ -39,10 +39,10 @@
       <Button fx:id="buttonStop" layoutX="531.0" layoutY="305.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" text="Stop" />
       <Button fx:id="buttonPreviousSong" layoutX="157.0" layoutY="305.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" text="&lt;&lt;" />
       <Button fx:id="buttonNextSong" layoutX="657.0" layoutY="305.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" text="&gt;&gt;" />
-      <Button fx:id="buttonExit" layoutX="454.0" layoutY="742.0" mnemonicParsing="false"  prefHeight="25.0" prefWidth="117.0" text="Exit" onAction="#quit" />
-      <Button fx:id="buttonPreviousAuthor" layoutX="14.0" layoutY="118.0" mnemonicParsing="false"  prefHeight="25.0" prefWidth="117.0" text="&lt;&lt;" />
-      <Button fx:id="buttonNextAuthor" layoutX="897.0" layoutY="118.0" mnemonicParsing="false"  prefHeight="25.0" prefWidth="117.0" text="&gt;&gt;" />
-      <Button fx:id="buttonPreviousAlbum" layoutX="14.0" layoutY="223.0" mnemonicParsing="false"  prefHeight="25.0" prefWidth="117.0" text="&lt;&lt;" />
-      <Button fx:id="buttonNextAlbum" layoutX="897.0" layoutY="223.0" mnemonicParsing="false"  prefHeight="25.0" prefWidth="117.0" text="&gt;&gt;" />
+      <Button fx:id="buttonExit" layoutX="454.0" layoutY="742.0" mnemonicParsing="false" onAction="#quit" prefHeight="25.0" prefWidth="117.0" text="Exit" />
+      <Button fx:id="buttonPreviousAuthor" layoutX="14.0" layoutY="118.0" mnemonicParsing="false" onAction="#previousAuthor" prefHeight="25.0" prefWidth="117.0" text="&lt;&lt;" />
+      <Button fx:id="buttonNextAuthor" layoutX="897.0" layoutY="118.0" mnemonicParsing="false" onAction="#nextAuthor" prefHeight="25.0" prefWidth="117.0" text="&gt;&gt;" />
+      <Button fx:id="buttonPreviousAlbum" layoutX="14.0" layoutY="223.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" text="&lt;&lt;" />
+      <Button fx:id="buttonNextAlbum" layoutX="897.0" layoutY="223.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="117.0" text="&gt;&gt;" />
    </children>
 </AnchorPane>

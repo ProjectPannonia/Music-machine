@@ -1,5 +1,6 @@
 package com.musicmachine;
 
+import com.musicmachine.controller.MyController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
