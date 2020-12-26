@@ -90,7 +90,10 @@
                            </padding>
                         </HBox>
                         <TableView prefHeight="410.0" prefWidth="1024.0" />
-                        <Button alignment="CENTER" mnemonicParsing="false" prefHeight="43.0" prefWidth="148.0" text="Stop" />
+                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#quit" prefHeight="43.0" prefWidth="148.0" text="Exit">
+                           <VBox.margin>
+                              <Insets left="450.0" top="10.0" />
+                           </VBox.margin></Button>
                      </children></VBox>
                </content>
             </Tab>
