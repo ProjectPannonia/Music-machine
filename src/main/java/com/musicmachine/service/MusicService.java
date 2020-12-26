@@ -1,11 +1,18 @@
 package com.musicmachine.service;
 
 import com.musicmachine.repository.MusicRepository;
+import com.musicmachine.repository.entities.Author;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.stage.DirectoryChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class MusicService {
@@ -34,6 +41,12 @@ public class MusicService {
 
         }
     }
+    public ObservableList<String> getAllBands() {
+        //musicRepository.getAllBands();
+        musicRepository.findAll();
+        return null;
+    }
+
     public void exit() {
         Platform.exit();
     }
@@ -71,4 +84,15 @@ public class MusicService {
     }
 
 
+    public DirectoryChooser getDirectory() {
+        return new DirectoryChooser();
+    }
+
+    public ObservableList getRegisteredAuthors() {
+        List<Author> authors = musicRepository.findAll();
+        List<String> authorsName = new ArrayList<>();
+        authors.forEach((n) -> authorsName.add(n.getAuthorName()));
+        Collections.sort(authorsName);
+        return FXCollections.observableArrayList(authorsName);
+    }
 }
