@@ -3,13 +3,13 @@ package com.musicmachine.controller;
 import com.musicmachine.service.MusicService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.File;
 
 @Component
 @FxmlView("music-machine.fxml")
@@ -23,28 +23,45 @@ public class MyController {
     }
 
     @FXML
-    private TableView<?> tableTrackList;
+    private TableView<?> tableTrackList, tableAdd;
 
     @FXML
     private Label labelActualAuthor, labelActualAlbum;
+
     @FXML
     private ChoiceBox choiceboxAuthors, choiceboxAddAuthor;
+    @FXML
+    private TextField textfieldNewBand;
+    @FXML
+    private CheckBox checkboxNewAuthor;
 
     public void initialize() {
+        //Thread.sleep(5000);
+        musicService.initialize();
         choiceboxAddAuthor.setItems(musicService.getRegisteredAuthors());
+        tableAdd.setEditable(true);
+        textfieldNewBand.setDisable(true);
+        checkboxNewAuthor.setSelected(false);
+        labelActualAuthor.setText(musicService.getFirstBandName());
     }
 
     @FXML
-    public void nextAuthor(ActionEvent e) {
-        //musicService.giveNextAuthor();
+    public void nextAuthor() {
+        labelActualAuthor.setText(musicService.giveNextAuthor());
     }
     @FXML
     public void previousAuthor() {
-        //musicService.givePreviousAuthor();
+        labelActualAuthor.setText(musicService.givePreviousAuthor());
     }
     @FXML
     public void add() {
         DirectoryChooser dir = musicService.getDirectory();
+        File files = dir.showDialog(null);
+    }
+    @FXML
+    public void newAuthorChecked() {
+        textfieldNewBand.setDisable(false);
+        choiceboxAddAuthor.setDisable(true);
     }
 
     public void quit() {
