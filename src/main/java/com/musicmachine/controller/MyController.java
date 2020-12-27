@@ -36,7 +36,6 @@ public class MyController {
     private CheckBox checkboxNewAuthor;
 
     public void initialize() {
-        //Thread.sleep(5000);
         musicService.initialize();
         choiceboxAddAuthor.setItems(musicService.getRegisteredAuthors());
         tableAdd.setEditable(true);
@@ -60,8 +59,13 @@ public class MyController {
     }
     @FXML
     public void newAuthorChecked() {
-        textfieldNewBand.setDisable(false);
-        choiceboxAddAuthor.setDisable(true);
+        if(checkboxNewAuthor.isSelected()){
+            textfieldNewBand.setDisable(false);
+            choiceboxAddAuthor.setDisable(true);
+        }else{
+            textfieldNewBand.setDisable(true);
+            choiceboxAddAuthor.setDisable(false);
+        }
     }
 
     public void quit() {

@@ -12,4 +12,9 @@ public interface MusicRepository extends JpaRepository<Author,Long> {
 
     @Query("SELECT id FROM Author")
     List<Long> getIds();
+
+//    @Query("SELECT authorname FROM Author")
+//    List<String> getAllAuthorNames();
+    @Query("select authorName from Author")
+    List<String> getAllAuthorNames();
 }

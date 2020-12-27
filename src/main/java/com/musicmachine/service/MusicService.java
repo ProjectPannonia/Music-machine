@@ -1,7 +1,6 @@
 package com.musicmachine.service;
 
 import com.musicmachine.repository.MusicRepository;
-import com.musicmachine.repository.entities.Author;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,7 +8,6 @@ import javafx.stage.DirectoryChooser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,20 +40,15 @@ public class MusicService {
     }
 
     public ObservableList getRegisteredAuthors() {
-        List<Author> authors = musicRepository.findAll();
-        List<String> authorsName = new ArrayList<>();
-        authors.forEach((n) -> authorsName.add(n.getAuthorName()));
-        Collections.sort(authorsName);
-        if(!authorsName.contains("+")){
-            authorsName.add("+");
-        }
-        return FXCollections.observableArrayList(authorsName);
+          List<String> registeredAuthorNames = musicRepository.getAllAuthorNames();
+//        Collections.sort(registeredAuthorNames);
+//        return FXCollections.observableArrayList(registeredAuthorNames);
+        Collections.sort(registeredAuthorNames);
+        return  FXCollections.observableArrayList(registeredAuthorNames);
     }
 
     public String getFirstBandName() {
-        String response = musicRepository.getOne(actualAuthorCounter).getAuthorName();
-        System.out.println("Response: " + response);
-        return response;
+        return musicRepository.getOne(actualAuthorCounter).getAuthorName();
     }
 
     public String giveNextAuthor() {
