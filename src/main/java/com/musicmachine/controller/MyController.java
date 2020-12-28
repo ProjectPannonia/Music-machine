@@ -31,7 +31,7 @@ public class MyController {
     @FXML
     private ChoiceBox choiceboxAuthors, choiceboxAddAuthor;
     @FXML
-    private TextField textfieldNewBand;
+    private TextField textfieldNewBand, textfieldNewAlbumsName;
     @FXML
     private CheckBox checkboxNewAuthor;
 
@@ -42,6 +42,7 @@ public class MyController {
         textfieldNewBand.setDisable(true);
         checkboxNewAuthor.setSelected(false);
         labelActualAuthor.setText(musicService.getFirstBandName());
+        textfieldNewAlbumsName.setDisable(true);
     }
 
     @FXML
@@ -56,15 +57,18 @@ public class MyController {
     public void add() {
         DirectoryChooser dir = musicService.getDirectory();
         File files = dir.showDialog(null);
+        textfieldNewAlbumsName.setText("");
     }
     @FXML
     public void newAuthorChecked() {
         if(checkboxNewAuthor.isSelected()){
             textfieldNewBand.setDisable(false);
             choiceboxAddAuthor.setDisable(true);
+            textfieldNewAlbumsName.setDisable(false);
         }else{
             textfieldNewBand.setDisable(true);
             choiceboxAddAuthor.setDisable(false);
+            textfieldNewAlbumsName.setDisable(true);
         }
     }
 
