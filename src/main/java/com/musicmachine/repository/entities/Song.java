@@ -21,6 +21,12 @@ public class Song {
 
     public Song() {}
 
+    public Song(String songName, String pathToSong, Album album) {
+        this.songName = songName;
+        this.pathToSong = pathToSong;
+        this.album = album;
+    }
+
     public Long getId() {
         return id;
     }

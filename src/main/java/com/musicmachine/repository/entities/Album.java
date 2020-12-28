@@ -23,6 +23,12 @@ public class Album {
 
     public Album() {}
 
+    public Album(String albumName, Author author, List<Song> songs) {
+        this.albumName = albumName;
+        this.author = author;
+        this.songs = songs;
+    }
+
     public Long getId() {
         return id;
     }

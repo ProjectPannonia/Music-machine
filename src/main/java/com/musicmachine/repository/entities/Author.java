@@ -20,6 +20,19 @@ public class Author {
 
     public Author() {}
 
+    public Author(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public Author(String authorName, List<Album> albums) {
+        this.authorName = authorName;
+        this.albums = albums;
+    }
+
+    public void addAlbumToAlbums(Album album) {
+        this.albums.add(album);
+    }
+
     public Long getId() {
         return id;
     }

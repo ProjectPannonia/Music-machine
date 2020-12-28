@@ -26,12 +26,12 @@ public class MyController {
     private TableView<?> tableTrackList, tableAdd;
 
     @FXML
-    private Label labelActualAuthor, labelActualAlbum;
+    private Label labelActualAuthor, labelActualAlbum, labelSaveResponse;
 
     @FXML
     private ChoiceBox choiceboxAuthors, choiceboxAddAuthor;
     @FXML
-    private TextField textfieldNewBand, textfieldNewAlbumsName;
+    private TextField textfieldNewBand, textfieldNewAlbumsName, textfieldNewAlbumPath;
     @FXML
     private CheckBox checkboxNewAuthor;
 
@@ -42,7 +42,7 @@ public class MyController {
         textfieldNewBand.setDisable(true);
         checkboxNewAuthor.setSelected(false);
         labelActualAuthor.setText(musicService.getFirstBandName());
-        textfieldNewAlbumsName.setDisable(true);
+
     }
 
     @FXML
@@ -57,19 +57,29 @@ public class MyController {
     public void add() {
         DirectoryChooser dir = musicService.getDirectory();
         File files = dir.showDialog(null);
-        textfieldNewAlbumsName.setText("");
+
+        textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
     }
     @FXML
     public void newAuthorChecked() {
         if(checkboxNewAuthor.isSelected()){
             textfieldNewBand.setDisable(false);
             choiceboxAddAuthor.setDisable(true);
-            textfieldNewAlbumsName.setDisable(false);
         }else{
             textfieldNewBand.setDisable(true);
             choiceboxAddAuthor.setDisable(false);
-            textfieldNewAlbumsName.setDisable(true);
         }
+    }
+    @FXML
+    public void save() {
+        String responseAfterSave;
+
+        if(checkboxNewAuthor.isSelected()) {
+            responseAfterSave = musicService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+        } else {
+            responseAfterSave = musicService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+        }
+        labelSaveResponse.setText(responseAfterSave);
     }
 
     public void quit() {
