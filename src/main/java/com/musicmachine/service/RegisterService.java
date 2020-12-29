@@ -61,7 +61,7 @@ public class RegisterService {
     }
     public String getFirstSongfFromAlbum(String actualAlbumName) {
         Long albumId = albumRepository.getAlbumIdByName(actualAlbumName);
-        List<String> songs = songRepository.getSongsById(albumId);
+        List<String> songs = songRepository.getSongsByAlbumId(albumId);
         return songs.get(0);
     }
     public DirectoryChooser getDirectory() {

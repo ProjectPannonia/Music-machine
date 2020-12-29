@@ -15,5 +15,5 @@ public interface SongRepository extends JpaRepository<Song, Long> {
     void saveWithAlbumId(@Param("name") String name, @Param("absolutePath") String absolutePath, @Param("albumId") Long albumId);
 
     @Query(value = "select s.songName from Song s where s.albumId = :albumId")
-    List<String> getSongsById(@Param("albumId") Long albumId);
+    List<String> getSongsByAlbumId(@Param("albumId") Long albumId);
 }

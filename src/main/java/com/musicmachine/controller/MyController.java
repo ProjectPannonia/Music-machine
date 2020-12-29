@@ -73,6 +73,21 @@ public class MyController {
         labelActualAuthor.setText(previousBandName);
     }
     @FXML
+    public void nextAlbum() {
+        String nextAlbum = playerService.giveNextAlbum();
+        labelActualAlbum.setText(nextAlbum);
+    }
+    @FXML
+    public void previousAlbum() {
+        String previousAlbum = playerService.givePreviousAlbum();
+        labelActualAlbum.setText(previousAlbum);
+    }
+    @FXML
+    public void nextSong() {
+//        String nextSong = playerService.giveNextSong();
+//        labelActualSong.setText(nextSong);
+    }
+    @FXML
     public void add() {
         DirectoryChooser dir = registerService.getDirectory();
         File files = dir.showDialog(null);
