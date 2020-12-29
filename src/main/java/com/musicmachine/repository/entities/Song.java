@@ -16,15 +16,18 @@ public class Song {
     @Column(name = "PathToSong")
     private String pathToSong;
 
-    @ManyToOne
-    private Album album;
+    @Column(name = "AlbumId")
+    private Long albumId;
+
+//    @ManyToOne
+//    private Album album;
 
     public Song() {}
 
-    public Song(String songName, String pathToSong, Album album) {
+    public Song(String songName, String pathToSong, Long albumId) {
         this.songName = songName;
         this.pathToSong = pathToSong;
-        this.album = album;
+        this.albumId = albumId;
     }
 
     public Long getId() {
@@ -51,11 +54,19 @@ public class Song {
         this.pathToSong = pathToSong;
     }
 
-    public Album getAlbum() {
-        return album;
+    public Long getAlbumId() {
+        return albumId;
     }
 
-    public void setAlbum(Album album) {
-        this.album = album;
+    public void setAlbumId(Long albumId) {
+        this.albumId = albumId;
     }
+
+    //    public Album getAlbum() {
+//        return album;
+//    }
+//
+//    public void setAlbum(Album album) {
+//        this.album = album;
+//    }
 }

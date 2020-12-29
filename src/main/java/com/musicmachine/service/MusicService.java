@@ -1,6 +1,8 @@
 package com.musicmachine.service;
 
+import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.MusicRepository;
+import com.musicmachine.repository.SongRepository;
 import com.musicmachine.repository.entities.Album;
 import com.musicmachine.repository.entities.Author;
 import com.musicmachine.repository.entities.Song;
@@ -20,6 +22,9 @@ import java.util.List;
 public class MusicService {
 
     private MusicRepository musicRepository;
+    private AlbumRepository albumRepository;
+    private SongRepository songRepository;
+
     private Long actualAuthorCounter;
     private Long actualAlbumCounter;
     private List<Long> authorIds;
@@ -27,15 +32,20 @@ public class MusicService {
     private int actualAuthorsIndex;
 
     @Autowired
-    public MusicService(MusicRepository musicRepository) {
+    public MusicService(MusicRepository musicRepository, AlbumRepository albumRepository, SongRepository songRepository) {
         this.musicRepository = musicRepository;
+        this.albumRepository = albumRepository;
+        this.songRepository = songRepository;
     }
+
 
     public void initialize() {
         authorIds = musicRepository.getIds();
         Collections.sort(authorIds);
 
-        actualAuthorCounter = authorIds.get(0);
+        if(!authorIds.isEmpty()) {
+            actualAuthorCounter = authorIds.get(0);
+        }
         authorIdsSize = authorIds.size();
         actualAuthorsIndex = 0;
     }
@@ -45,15 +55,20 @@ public class MusicService {
     }
 
     public ObservableList getRegisteredAuthors() {
-          List<String> registeredAuthorNames = musicRepository.getAllAuthorNames();
-//        Collections.sort(registeredAuthorNames);
-//        return FXCollections.observableArrayList(registeredAuthorNames);
+        List<String> registeredAuthorNames = musicRepository.getAllAuthorNames();
         Collections.sort(registeredAuthorNames);
+
         return  FXCollections.observableArrayList(registeredAuthorNames);
     }
 
     public String getFirstBandName() {
-        return musicRepository.getOne(actualAuthorCounter).getAuthorName();
+        Long countBandsInDb = musicRepository.count();
+        String firstBandName = "Database empty";
+
+        if(countBandsInDb > 0) {
+            firstBandName = musicRepository.getOne(actualAuthorCounter).getAuthorName();
+        }
+        return firstBandName;
     }
 
     public String giveNextAuthor() {
@@ -71,22 +86,49 @@ public class MusicService {
         return musicRepository.getOne(new Long(actualAuthorsIndex)).getAuthorName();
     }
     public String saveNewAuthor(String newAuthorName, String newAlbumName, String newAlbumPath) {
-        System.out.println("New author name: " + newAuthorName + ", new album name: " + newAlbumName + ", new album path: " + newAlbumPath);
-        boolean invalidNewAuthorName = newAuthorName != null && !newAuthorName.equals("");
-        boolean invalidNewAlbumName = newAlbumName != null && !newAlbumName.equals("");
-        boolean invalidPath = newAlbumPath != null && !newAlbumPath.equals("");
-        String saveResponse = "Invalid data";
+        String response;
+        Author searchAuthorInDb = musicRepository.findByName(newAuthorName);
+        if (searchAuthorInDb == null) {
+            System.out.println("New author");
+            musicRepository.save(new Author(newAuthorName));
+            Long createdId = musicRepository.getIdByName(newAuthorName);
+            createAlbum(newAlbumName,createdId,newAlbumPath);
 
-        if (invalidNewAuthorName && invalidNewAlbumName && invalidPath) {
-            Author authorFromDb = musicRepository.getByBandName(newAuthorName);
+            System.out.println("Created id: " + createdId.toString());
+            response = "New author saved";
+        } else {
+            response = "This author already exist!";
+        }
+        return response;
+    }
 
-            if(authorFromDb == null) {
-                Author newAuthorToDb = new Author(newAuthorName);
-                saveResponse = "New author: " + newAuthorName + " saved.";
+    private void createAlbum(String newAlbumName, Long authorId, String albumsPath) {
+        Album createdAlbum = new Album(newAlbumName, authorId);
+        albumRepository.save(createdAlbum);
+        Long albumId = albumRepository.getAlbumIdByName(newAlbumName);
+        System.out.println("Created album id: " + albumId.toString());
+        readMusicFiles(albumId, albumsPath);
+    }
+
+    private void readMusicFiles(Long albumId, String albumsPath) {
+        File[] filesInFolder = new File(albumsPath).listFiles();
+        for (File file : filesInFolder) {
+            if (!file.isDirectory()) {
+                System.out.println(file.getName() + ", " + file.getAbsolutePath());
+                Song song = new Song(file.getName(), file.getAbsolutePath(), albumId);
+                songRepository.save(song);
             }
         }
-        return saveResponse;
+        //saveSonsToDb(filesInFolder, albumId);
     }
+
+    private void saveSonsToDb(File[] filesInFolder, Long albumId) {
+        List<Song> songs = new ArrayList<>();
+        for (File file : filesInFolder) {
+            songRepository.saveWithAlbumId(file.getName(),file.getAbsolutePath(), albumId);
+        }
+    }
+
     public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath) {
         String saveResponse = "Invalid data";
         Long authorId = musicRepository.getIdByName(authorName);

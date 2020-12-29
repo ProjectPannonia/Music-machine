@@ -15,8 +15,8 @@ public class Author {
     @Column(name = "AuthorName")
     private String authorName;
 
-    @OneToMany(mappedBy = "author")
-    private List<Album> albums;
+//    @OneToMany(mappedBy = "author")
+//    private List<Album> albums;
 
     public Author() {}
 
@@ -24,14 +24,14 @@ public class Author {
         this.authorName = authorName;
     }
 
-    public Author(String authorName, List<Album> albums) {
-        this.authorName = authorName;
-        this.albums = albums;
-    }
+//    public Author(String authorName, List<Album> albums) {
+//        this.authorName = authorName;
+//        this.albums = albums;
+//    }
 
-    public void addAlbumToAlbums(Album album) {
-        this.albums.add(album);
-    }
+//    public void addAlbumToAlbums(Album album) {
+//        this.albums.add(album);
+//    }
 
     public Long getId() {
         return id;
@@ -49,11 +49,11 @@ public class Author {
         this.authorName = authorName;
     }
 
-    public List<Album> getAlbums() {
-        return albums;
-    }
-
-    public void setAlbums(List<Album> albums) {
-        this.albums = albums;
-    }
+//    public List<Album> getAlbums() {
+//        return albums;
+//    }
+//
+//    public void setAlbums(List<Album> albums) {
+//        this.albums = albums;
+//    }
 }

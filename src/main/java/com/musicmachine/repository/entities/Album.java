@@ -15,18 +15,21 @@ public class Album {
     @Column(name = "AlbumName")
     private String albumName;
 
-    @ManyToOne
-    private Author author;
+    @Column(name = "AuthorId")
+    private Long authorId;
 
-    @OneToMany(mappedBy = "album")
-    private List<Song> songs;
+//    @ManyToOne
+//    private Author author;
+
+//    @OneToMany(mappedBy = "album")
+//    private List<Song> songs;
+
 
     public Album() {}
 
-    public Album(String albumName, Author author, List<Song> songs) {
+    public Album(String albumName, Long authorId) {
         this.albumName = albumName;
-        this.author = author;
-        this.songs = songs;
+        this.authorId = authorId;
     }
 
     public Long getId() {
@@ -45,19 +48,27 @@ public class Album {
         this.albumName = albumName;
     }
 
-    public Author getAuthor() {
-        return author;
+    public Long getAuthorId() {
+        return authorId;
     }
 
-    public void setAuthor(Author author) {
-        this.author = author;
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 
-    public List<Song> getSongs() {
-        return songs;
-    }
-
-    public void setSongs(List<Song> songs) {
-        this.songs = songs;
-    }
+    //    public Author getAuthor() {
+//        return author;
+//    }
+//
+//    public void setAuthor(Author author) {
+//        this.author = author;
+//    }
+//
+//    public List<Song> getSongs() {
+//        return songs;
+//    }
+//
+//    public void setSongs(List<Song> songs) {
+//        this.songs = songs;
+//    }
 }

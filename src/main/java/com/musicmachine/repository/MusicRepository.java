@@ -20,9 +20,16 @@ public interface MusicRepository extends JpaRepository<Author,Long> {
     @Query(value = "select s from Author s where s.authorName = :authorName")
     Author getByBandName(@Param("authorName") String authorName);
 
-    @Query(value = "select s from Author s where s.authorName = :authorName")
+    @Query(value = "select s.id from Author s where s.authorName = :authorName")
     Long getIdByName(@Param("authorName") String authorName);
 
     @Query(value = "select s from Author s where s.id = :authorId")
     Author getAuthorById(@Param("authorId") Long authorId);
+
+    @Query(value = "select s from Author s where s.authorName = :name")
+    Author findByName(@Param("name") String name);
+
+    //"insert into Song (pathToSong, songName, albumId) values(:absolutePath, :name, :albumId)", nativeQuery = true)
+    @Query(value = "insert into Author(ahuthorName) values(:first)", nativeQuery = true)
+    void saveMyOwn(@Param("first") Author first);
 }
