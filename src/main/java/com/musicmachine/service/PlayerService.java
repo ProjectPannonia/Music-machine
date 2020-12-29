@@ -3,9 +3,12 @@ package com.musicmachine.service;
 import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.AuthorRepository;
 import com.musicmachine.repository.SongRepository;
+import com.musicmachine.repository.entities.Song;
+import org.apache.catalina.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -154,4 +157,17 @@ public class PlayerService {
     }
 
 
+    public void playSong(String bandName, String albumName, String songName) {
+        Long bandId = authorRepository.getIdByName(bandName);
+        Long albumId = albumRepository.getAlbumIdByName(albumName);
+        Long songId = songRepository.getSongIDBySongName(albumId,songName);
+        System.out.println("Band id: " + bandId + ", albumId: " + albumId + ", songId: " + songId);
+        Song song = songRepository.getSongBySongId(songId);
+        System.out.println("Song path: " + song.getPathToSong());
+        play(song.getPathToSong());
+    }
+
+    private void play(String pathToSong) {
+        
+    }
 }

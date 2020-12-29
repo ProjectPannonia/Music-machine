@@ -107,6 +107,13 @@ public class MyController {
         labelActualSong.setText(previousSong);
     }
     @FXML
+    public void play() {
+        String bandName = labelActualAuthor.getText();
+        String albumName = labelActualAlbum.getText();
+        String songName = labelActualSong.getText();
+        playerService.playSong(bandName,albumName,songName);
+    }
+    @FXML
     public void add() {
         DirectoryChooser dir = registerService.getDirectory();
         File files = dir.showDialog(null);
