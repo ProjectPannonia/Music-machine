@@ -89,20 +89,6 @@ public class PlayerService {
         if(authorNamesListIndex + 1 < authorsListSize) {
             authorNamesListIndex++;
             refreshAlbumNameListAndSongNamesList();
-//            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorNamesListIndex));
-//            // Refresh albums list
-//            albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
-//            albumListSize = albumNamesList.size();
-//
-//            // Set albumNamesListIndex to 0
-//            albumNamesListIndex = 0;
-//            // Set albumOnAirId to the first album's albumId
-//            //albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(0));
-//            albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
-//            // Refresh songs by albumId
-//            songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
-//            songListSize = songNamesList.size();
-//            songNamesListIndex = 0;
         }
         return authorNamesList.get(authorNamesListIndex);
     }
@@ -110,19 +96,6 @@ public class PlayerService {
         if(authorNamesListIndex - 1 >= 0) {
             authorNamesListIndex--;
             refreshAlbumNameListAndSongNamesList();
-//            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorNamesListIndex));
-//            // Refresh albums list
-//            albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
-//            albumListSize = albumNamesList.size();
-//
-//            // Set albumNamesListIndex to 0
-//            albumNamesListIndex = 0;
-//            // Set albumOnAirId to the first album's albumId
-//            albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
-//            // Refresh songs by albumId
-//            songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
-//            songListSize = songNamesList.size();
-//            songNamesListIndex = 0;
         }
         return authorNamesList.get(authorNamesListIndex);
     }
