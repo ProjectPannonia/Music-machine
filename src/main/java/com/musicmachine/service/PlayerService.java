@@ -63,4 +63,9 @@ public class PlayerService {
         if(authorsIndex + 1 < authorsListSize) authorsIndex++;
         return authors.get(authorsIndex);
     }
+
+    public String givePreviousBandName() {
+        if(authorsIndex - 1 >= 0) authorsIndex--;
+        return authors.get(authorsIndex);
+    }
 }

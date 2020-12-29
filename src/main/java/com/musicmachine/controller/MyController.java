@@ -69,8 +69,8 @@ public class MyController {
     }
     @FXML
     public void previousAuthor() {
-        String previousAuthor = registerService.givePreviousAuthor();
-        labelActualAuthor.setText(previousAuthor);
+        String previousBandName = playerService.givePreviousBandName();
+        labelActualAuthor.setText(previousBandName);
     }
     @FXML
     public void add() {
