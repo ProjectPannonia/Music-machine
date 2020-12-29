@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MusicRepository extends JpaRepository<Author,Long> {
+public interface AuthorRepository extends JpaRepository<Author,Long> {
 
     @Query("SELECT id FROM Author")
     List<Long> getIds();

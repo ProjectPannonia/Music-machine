@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AlbumRepository extends JpaRepository<Album, Long> {
 
@@ -18,4 +20,7 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
     @Query(value = "select s from Album s where s.albumName = :newAlbumName")
     Album getAlbumByName(@Param("newAlbumName") String newAlbumName);
+
+    @Query(value = "select s.albumName from Album s where s.authorId = :authorId")
+    List<String> findAlbumsByAuthorId(@Param("authorId") Long authorId);
 }

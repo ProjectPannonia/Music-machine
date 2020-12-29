@@ -1,7 +1,7 @@
 package com.musicmachine.controller;
 
-import com.musicmachine.service.MusicService;
-import javafx.event.ActionEvent;
+import com.musicmachine.service.RegisterService;
+import com.musicmachine.service.PlayerService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
@@ -15,19 +15,10 @@ import java.io.File;
 @FxmlView("music-machine.fxml")
 public class MyController {
 
-    private MusicService musicService;
-
-    @Autowired
-    public MyController(MusicService musicService) {
-        this.musicService = musicService;
-    }
-
     @FXML
     private TableView<?> tableTrackList, tableAdd;
-
     @FXML
-    private Label labelActualAuthor, labelActualAlbum, labelSaveResponse;
-
+    private Label labelActualAuthor, labelActualAlbum, labelSaveResponse, labelActualSong;
     @FXML
     private ChoiceBox choiceboxAuthors, choiceboxAddAuthor;
     @FXML
@@ -35,27 +26,58 @@ public class MyController {
     @FXML
     private CheckBox checkboxNewAuthor;
 
+    private PlayerService playerService;
+    private RegisterService registerService;
+
+    @Autowired
+    public MyController(PlayerService playerService, RegisterService registerService) {
+        this.playerService = playerService;
+        this.registerService = registerService;
+    }
+
+    private String actualAuthorName;
+    private String actualAlbumName;
+    private String actualSongName;
+
     public void initialize() {
-        musicService.initialize();
-        choiceboxAddAuthor.setItems(musicService.getRegisteredAuthors());
+        // MUSIC-BOX PAGE
+        // Music service initialize
+        playerService.initialize();
+        // Get first band name from database
+        actualAuthorName = playerService.getFirstBandName();
+        // Initialize Actual author label
+        labelActualAuthor.setText(actualAuthorName);
+        // Initialize Actual album label with actual author's first registered album
+        actualAlbumName = playerService.getFirstAlbumFromThisAuthor();
+        labelActualAlbum.setText(actualAlbumName);
+        // Get first song name from album
+        actualSongName = playerService.getFirstSongfFromAlbum(actualAlbumName);
+        labelActualSong.setText(actualSongName);
+        // ADD PAGE
+        // Add page choose author choicebox initialize -> get registered authors from database
+        choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
         tableAdd.setEditable(true);
         textfieldNewBand.setDisable(true);
         checkboxNewAuthor.setSelected(false);
-        labelActualAuthor.setText(musicService.getFirstBandName());
 
     }
 
     @FXML
     public void nextAuthor() {
-        labelActualAuthor.setText(musicService.giveNextAuthor());
+        String nextAuthor = registerService.giveNextAuthor();
+        System.out.println("Next author: " + nextAuthor);
+//        albumList = songService.listAlbumNames(nextAuthor);
+//        songList = songService.getSongsByAlbumName(nextAuthor);
+        labelActualAuthor.setText(nextAuthor);
     }
     @FXML
     public void previousAuthor() {
-        labelActualAuthor.setText(musicService.givePreviousAuthor());
+        String previousAuthor = registerService.givePreviousAuthor();
+        labelActualAuthor.setText(previousAuthor);
     }
     @FXML
     public void add() {
-        DirectoryChooser dir = musicService.getDirectory();
+        DirectoryChooser dir = registerService.getDirectory();
         File files = dir.showDialog(null);
 
         textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
@@ -75,14 +97,14 @@ public class MyController {
         String responseAfterSave;
 
         if(checkboxNewAuthor.isSelected()) {
-            responseAfterSave = musicService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+            responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
         } else {
-            responseAfterSave = musicService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+            responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
         }
         labelSaveResponse.setText(responseAfterSave);
     }
 
     public void quit() {
-        musicService.exit();
+        registerService.exit();
     }
 }

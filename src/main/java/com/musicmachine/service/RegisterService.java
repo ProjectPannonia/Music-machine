@@ -1,7 +1,7 @@
 package com.musicmachine.service;
 
 import com.musicmachine.repository.AlbumRepository;
-import com.musicmachine.repository.MusicRepository;
+import com.musicmachine.repository.AuthorRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.repository.entities.Album;
 import com.musicmachine.repository.entities.Author;
@@ -18,81 +18,93 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
-public class MusicService {
+public class RegisterService {
 
-    private MusicRepository musicRepository;
+    private AuthorRepository authorRepository;
     private AlbumRepository albumRepository;
     private SongRepository songRepository;
 
     private Long actualAuthorCounter;
     private Long actualAlbumCounter;
-    private List<Long> authorIds;
-    private int authorIdsSize;
+
+
+
     private int actualAuthorsIndex;
 
     @Autowired
-    public MusicService(MusicRepository musicRepository, AlbumRepository albumRepository, SongRepository songRepository) {
-        this.musicRepository = musicRepository;
+    public RegisterService(AuthorRepository authorRepository, AlbumRepository albumRepository, SongRepository songRepository) {
+        this.authorRepository = authorRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
     }
 
-
+    private List<String> registeredAuthors;
+    private int registeredAuthorsSize;
+    private int authorOnAirIndex;
     public void initialize() {
-        authorIds = musicRepository.getIds();
-        Collections.sort(authorIds);
-
-        if (!authorIds.isEmpty()) {
-            actualAuthorCounter = authorIds.get(0);
-        }
-        authorIdsSize = authorIds.size();
-        actualAuthorsIndex = 0;
+        registeredAuthors = authorRepository.getAllAuthorNames();
+        registeredAuthorsSize = registeredAuthors.size();
+        authorOnAirIndex = 0;
     }
+    public String getFirstBandName() {
+        String firstBandName = "Database empty";
 
+        if (authorRepository.count() > 0) firstBandName = registeredAuthors.get(0);
+
+        return firstBandName;
+    }
+    public String getFirstAlbumFromThisAuthor(String actualAuthorName) {
+        Long authorId = authorRepository.getIdByName(actualAuthorName);
+        List<String> albumNamesForThisAuthor = albumRepository.findAlbumsByAuthorId(authorId);
+        System.out.println(albumNamesForThisAuthor.size());
+        return albumNamesForThisAuthor.get(0);
+    }
+    public String getFirstSongfFromAlbum(String actualAlbumName) {
+        Long albumId = albumRepository.getAlbumIdByName(actualAlbumName);
+        List<String> songs = songRepository.getSongsById(albumId);
+        return songs.get(0);
+    }
     public DirectoryChooser getDirectory() {
         return new DirectoryChooser();
     }
 
     public ObservableList getRegisteredAuthors() {
-        List<String> registeredAuthorNames = musicRepository.getAllAuthorNames();
+        List<String> registeredAuthorNames = authorRepository.getAllAuthorNames();
+        registeredAuthorNames.forEach((n) -> System.out.println(n));
         Collections.sort(registeredAuthorNames);
 
         return FXCollections.observableArrayList(registeredAuthorNames);
     }
 
-    public String getFirstBandName() {
-        Long countBandsInDb = musicRepository.count();
-        String firstBandName = "Database empty";
 
-        if (countBandsInDb > 0) {
-            firstBandName = musicRepository.getOne(actualAuthorCounter).getAuthorName();
-        }
-        return firstBandName;
-    }
 
     public String giveNextAuthor() {
-        actualAuthorsIndex++;
-
-        if (actualAuthorsIndex >= authorIdsSize) actualAuthorsIndex--;
-
-        return musicRepository.getOne(new Long(actualAuthorsIndex)).getAuthorName();
+        String nextAuthorName;
+        authorOnAirIndex++;
+        if(authorOnAirIndex < registeredAuthorsSize){
+            nextAuthorName = registeredAuthors.get(authorOnAirIndex);
+        }else {
+            authorOnAirIndex--;
+            nextAuthorName = registeredAuthors.get(authorOnAirIndex);
+        }
+        return nextAuthorName;
     }
 
     public String givePreviousAuthor() {
         actualAuthorsIndex--;
 
-        if (actualAuthorsIndex < 0) actualAuthorsIndex++;
+        if (actualAuthorsIndex < 1) actualAuthorsIndex++;
 
-        return musicRepository.getOne(new Long(actualAuthorsIndex)).getAuthorName();
+        return authorRepository.getOne(new Long(actualAuthorsIndex)).getAuthorName();
     }
 
     public String saveNewAuthor(String newAuthorName, String newAlbumName, String newAlbumPath) {
         String response;
-        Author searchAuthorInDb = musicRepository.findByName(newAuthorName);
+        Author searchAuthorInDb = authorRepository.findByName(newAuthorName);
         if (searchAuthorInDb == null) {
             System.out.println("New author");
-            musicRepository.save(new Author(newAuthorName));
-            Long createdId = musicRepository.getIdByName(newAuthorName);
+            authorRepository.save(new Author(newAuthorName));
+            Long createdId = authorRepository.getIdByName(newAuthorName);
             createAlbum(newAlbumName, createdId, newAlbumPath);
 
             System.out.println("Created id: " + createdId.toString());
@@ -114,7 +126,7 @@ public class MusicService {
 
     public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath) {
         String saveResponse = "Invalid data";
-        Long authorId = musicRepository.getIdByName(authorName);
+        Long authorId = authorRepository.getIdByName(authorName);
         boolean isAlbumExist = checkAlbumNameInDb(newAlbumName);
         if(!isAlbumExist){
             albumRepository.save(new Album(newAlbumName,authorId));
@@ -178,4 +190,7 @@ public class MusicService {
     public void setActualAlbumCounter(Long actualAlbumCounter) {
         this.actualAlbumCounter = actualAlbumCounter;
     }
+
+
+
 }
