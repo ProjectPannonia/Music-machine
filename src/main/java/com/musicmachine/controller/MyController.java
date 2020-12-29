@@ -63,12 +63,9 @@ public class MyController {
     }
 
     @FXML
-    public void nextAuthor() {
-        String nextAuthor = registerService.giveNextAuthor();
-        System.out.println("Next author: " + nextAuthor);
-//        albumList = songService.listAlbumNames(nextAuthor);
-//        songList = songService.getSongsByAlbumName(nextAuthor);
-        labelActualAuthor.setText(nextAuthor);
+    public void nextBand() {
+        String nextBandName = playerService.giveNextBandName();
+        labelActualAuthor.setText(nextBandName);
     }
     @FXML
     public void previousAuthor() {

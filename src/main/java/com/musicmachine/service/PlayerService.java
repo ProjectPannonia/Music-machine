@@ -33,7 +33,6 @@ public class PlayerService {
         authorsIndex = 0;
         if(authorsListSize > 0) {
             authorOnAirId = authorRepository.getIdByName(authors.get(0));
-            System.out.println("Author on air id: " + authorOnAirId);
         }
     }
 
@@ -48,7 +47,6 @@ public class PlayerService {
     public String getFirstAlbumFromThisAuthor() {
         String firsAlbumName = "Albums empty";
         List<String> albums = albumRepository.findAlbumsByAuthorId(authorOnAirId);
-        System.out.println("Number of albums: " + albums.size());
         if (!albums.isEmpty()) firsAlbumName = albums.get(0);
         return firsAlbumName;
     }
@@ -59,5 +57,10 @@ public class PlayerService {
         List<String> songs = songRepository.getSongsById(albumId);
         if (!songs.isEmpty()) firstSongName = songs.get(0);
         return firstSongName;
+    }
+
+    public String giveNextBandName() {
+        if(authorsIndex + 1 < authorsListSize) authorsIndex++;
+        return authors.get(authorsIndex);
     }
 }
