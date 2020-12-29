@@ -70,7 +70,6 @@ public class PlayerService {
 
     public String getFirstAlbumFromThisAuthor() {
         String firsAlbumName = "Albums empty";
-        //List<String> albums = albumRepository.findAlbumsByAuthorId(authorOnAirId);
         if (!albumNamesList.isEmpty()) firsAlbumName = albumNamesList.get(albumIndex);
         return firsAlbumName;
     }
@@ -85,17 +84,38 @@ public class PlayerService {
     }
 
     public String giveNextBandName() {
-        if(authorsIndex + 1 < authorsListSize) authorsIndex++;
+        if(authorsIndex + 1 < authorsListSize) {
+            authorsIndex++;
+            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorsIndex));
+            albumIndex = 0;
+        }
         return authorNamesList.get(authorsIndex);
     }
-
+    public void refreshAlbumNamesList() {
+        this.albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
+        albumListSize = albumNamesList.size();
+    }
+    public void refresSongNamesList() {
+        String albumName = albumNamesList.get(albumIndex);
+        albumOnAirId = albumRepository.getAlbumIdByName(albumName);
+        this.songListNames = songRepository.getSongsByAlbumId(albumOnAirId);
+    }
+    public String refreshFirstAlbumName() {
+        return albumNamesList.get(albumIndex);
+    }
     public String givePreviousBandName() {
-        if(authorsIndex - 1 >= 0) authorsIndex--;
+        if(authorsIndex - 1 >= 0) {
+            authorsIndex--;
+            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorsIndex));
+            albumIndex = 0;
+        }
         return authorNamesList.get(authorsIndex);
     }
 
     public String giveNextAlbum() {
-        if (albumIndex + 1 < albumListSize) albumIndex++;
+        if (albumIndex + 1 < albumListSize) {
+            albumIndex++;
+        }
         return albumNamesList.get(albumIndex);
     }
 
@@ -113,4 +133,5 @@ public class PlayerService {
         if(songIndex - 1 >= 0) songIndex--;
         return songListNames.get(songIndex);
     }
+
 }

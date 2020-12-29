@@ -23,4 +23,6 @@ public interface AlbumRepository extends JpaRepository<Album, Long> {
 
     @Query(value = "select s.albumName from Album s where s.authorId = :authorId")
     List<String> findAlbumsByAuthorId(@Param("authorId") Long authorId);
+
+
 }
