@@ -92,7 +92,9 @@ public class MyController {
     @FXML
     public void previousAlbum() {
         String previousAlbum = playerService.givePreviousAlbum();
+        String previousAlbumFirstSong = playerService.getFirstSongNameFromAlbum();
         labelActualAlbum.setText(previousAlbum);
+        labelActualSong.setText(previousAlbumFirstSong);
     }
     @FXML
     public void nextSong() {

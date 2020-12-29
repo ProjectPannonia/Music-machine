@@ -137,19 +137,23 @@ public class PlayerService {
         }
         return albumNamesList.get(albumNamesListIndex);
     }
+    public String givePreviousAlbum() {
+        if(albumNamesListIndex -1 >= 0) {
+            albumNamesListIndex--;
+            // Set albumOnAirId to the next album's albumId
+            albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
+            // Refresh songs by albumId
+            songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
+            songListSize = songNamesList.size();
+            songNamesListIndex = 0;
+        }
+        return albumNamesList.get(albumNamesListIndex);
+    }
     public String getBandFirstAlbum() {
         return albumNamesList.get(albumNamesListIndex);
     }
     public String getFirstSongNameFromAlbum() {
         return songNamesList.get(songNamesListIndex);
-    }
-
-
-
-
-    public String givePreviousAlbum() {
-        if(albumNamesListIndex -1 >= 0) albumNamesListIndex--;
-        return albumNamesList.get(albumNamesListIndex);
     }
 
     public String giveNextSong() {
