@@ -14,17 +14,17 @@ public class PlayerService {
 
     private List<String> authorNamesList;
     private int authorsListSize;
-    private int authorsIndex;
+    private int authorNamesListIndex;
     private Long authorOnAirId;
 
     private List<String> albumNamesList;
     private int albumListSize;
-    private int albumIndex;
+    private int albumNamesListIndex;
     private Long albumOnAirId;
 
-    private List<String> songListNames;
+    private List<String> songNamesList;
     private int songListSize;
-    private int songIndex;
+    private int songNamesListIndex;
 
     AuthorRepository authorRepository;
     AlbumRepository albumRepository;
@@ -40,20 +40,20 @@ public class PlayerService {
     public void initialize() {
         authorNamesList = authorRepository.getAllAuthorNames();
         authorsListSize = authorNamesList.size();
-        authorsIndex = 0;
+        authorNamesListIndex = 0;
         if(authorsListSize > 0) {
             authorOnAirId = authorRepository.getIdByName(authorNamesList.get(0));
             albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
             albumListSize = albumNamesList.size();
             if(albumListSize > 0){
-                albumIndex = 0;
-                albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumIndex));
+                albumNamesListIndex = 0;
+                albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
 
-                songListNames = songRepository.getSongsByAlbumId(albumOnAirId);
-                System.out.println("Song list names size: " + songListNames.size());
-                songListSize = songListNames.size();
+                songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
+                System.out.println("Song list names size: " + songNamesList.size());
+                songListSize = songNamesList.size();
                 if(songListSize > 0) {
-                    songIndex = 0;
+                    songNamesListIndex = 0;
                 }
             }
             Collections.sort(albumNamesList);
@@ -63,75 +63,103 @@ public class PlayerService {
     public String getFirstBandName() {
         String firstBandName = "Database empty";
 
-        if (!authorNamesList.isEmpty()) firstBandName = authorNamesList.get(authorsIndex);
+        if (!authorNamesList.isEmpty()) firstBandName = authorNamesList.get(authorNamesListIndex);
 
         return firstBandName;
     }
 
     public String getFirstAlbumFromThisAuthor() {
         String firsAlbumName = "Albums empty";
-        if (!albumNamesList.isEmpty()) firsAlbumName = albumNamesList.get(albumIndex);
+        if (!albumNamesList.isEmpty()) firsAlbumName = albumNamesList.get(albumNamesListIndex);
         return firsAlbumName;
     }
 
     public String getFirstSongfFromAlbum(String actualAlbumName) {
         String firstSongName = "No registered songs.";
         Long albumId = albumRepository.getAlbumIdByName(actualAlbumName);
-        songListNames = songRepository.getSongsByAlbumId(albumId);
+        songNamesList = songRepository.getSongsByAlbumId(albumId);
 
-        if (!songListNames.isEmpty()) firstSongName = songListNames.get(songIndex);
+        if (!songNamesList.isEmpty()) firstSongName = songNamesList.get(songNamesListIndex);
         return firstSongName;
     }
 
+
+
     public String giveNextBandName() {
-        if(authorsIndex + 1 < authorsListSize) {
-            authorsIndex++;
-            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorsIndex));
-            albumIndex = 0;
+        if(authorNamesListIndex + 1 < authorsListSize) {
+            authorNamesListIndex++;
+
+            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorNamesListIndex));
+            // Refresh albums list
+            albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
+            albumListSize = albumNamesList.size();
+
+            // Set albumNamesListIndex to 0
+            albumNamesListIndex = 0;
+            // Set albumOnAirId to the first album's albumId
+            //albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(0));
+            albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
+            // Refresh songs by albumId
+            songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
+            songListSize = songNamesList.size();
+            songNamesListIndex = 0;
         }
-        return authorNamesList.get(authorsIndex);
-    }
-    public void refreshAlbumNamesList() {
-        this.albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
-        albumListSize = albumNamesList.size();
-    }
-    public void refresSongNamesList() {
-        String albumName = albumNamesList.get(albumIndex);
-        albumOnAirId = albumRepository.getAlbumIdByName(albumName);
-        this.songListNames = songRepository.getSongsByAlbumId(albumOnAirId);
-    }
-    public String refreshFirstAlbumName() {
-        return albumNamesList.get(albumIndex);
+        return authorNamesList.get(authorNamesListIndex);
     }
     public String givePreviousBandName() {
-        if(authorsIndex - 1 >= 0) {
-            authorsIndex--;
-            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorsIndex));
-            albumIndex = 0;
+        if(authorNamesListIndex - 1 >= 0) {
+            authorNamesListIndex--;
+            authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorNamesListIndex));
+            // Refresh albums list
+            albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
+            albumListSize = albumNamesList.size();
+
+            // Set albumNamesListIndex to 0
+            albumNamesListIndex = 0;
+            // Set albumOnAirId to the first album's albumId
+            albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
+            // Refresh songs by albumId
+            songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
+            songListSize = songNamesList.size();
+            songNamesListIndex = 0;
         }
-        return authorNamesList.get(authorsIndex);
+        return authorNamesList.get(authorNamesListIndex);
     }
 
+    public void refresSongNamesList() {
+        String albumName = albumNamesList.get(albumNamesListIndex);
+        albumOnAirId = albumRepository.getAlbumIdByName(albumName);
+        this.songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
+    }
+    public String getBandFirstAlbum() {
+        return albumNamesList.get(albumNamesListIndex);
+    }
+    public String getFirstSongNameFromAlbum() {
+        return songNamesList.get(songNamesListIndex);
+    }
+
+
     public String giveNextAlbum() {
-        if (albumIndex + 1 < albumListSize) {
-            albumIndex++;
+        if (albumNamesListIndex + 1 < albumListSize) {
+            albumNamesListIndex++;
         }
-        return albumNamesList.get(albumIndex);
+        return albumNamesList.get(albumNamesListIndex);
     }
 
     public String givePreviousAlbum() {
-        if(albumIndex -1 >= 0) albumIndex--;
-        return albumNamesList.get(albumIndex);
+        if(albumNamesListIndex -1 >= 0) albumNamesListIndex--;
+        return albumNamesList.get(albumNamesListIndex);
     }
 
     public String giveNextSong() {
-        if(songIndex + 1 < songListSize) songIndex++;
-        return songListNames.get(songIndex);
+        if(songNamesListIndex + 1 < songListSize) songNamesListIndex++;
+        return songNamesList.get(songNamesListIndex);
     }
 
     public String givePreviousSong() {
-        if(songIndex - 1 >= 0) songIndex--;
-        return songListNames.get(songIndex);
+        if(songNamesListIndex - 1 >= 0) songNamesListIndex--;
+        return songNamesList.get(songNamesListIndex);
     }
+
 
 }

@@ -64,19 +64,23 @@ public class MyController {
 
     @FXML
     public void nextBand() {
+        // Update -> band name
         String nextBandName = playerService.giveNextBandName();
-        playerService.refreshAlbumNamesList();
-        String nextBandFirstAlbum = playerService.refreshFirstAlbumName();
-        labelActualAlbum.setText(nextBandFirstAlbum);
+        String nextBandFirstAlbum = playerService.getBandFirstAlbum();
+        String nextAlbumFirstSongName = playerService.getFirstSongNameFromAlbum();
         labelActualAuthor.setText(nextBandName);
+        labelActualSong.setText(nextAlbumFirstSongName);
+        labelActualAlbum.setText(nextBandFirstAlbum);
     }
     @FXML
     public void previousBand() {
         String previousBandName = playerService.givePreviousBandName();
-        playerService.refreshAlbumNamesList();
-        String previousBandFirstAlbum = playerService.refreshFirstAlbumName();
-        labelActualAlbum.setText(previousBandFirstAlbum);
+        String previousBandFirstAlbumName = playerService.getBandFirstAlbum();
+        String previousBandFirstSongName = playerService.getFirstSongNameFromAlbum();
         labelActualAuthor.setText(previousBandName);
+        labelActualAlbum.setText(previousBandFirstAlbumName);
+        labelActualSong.setText(previousBandFirstSongName);
+
     }
     @FXML
     public void nextAlbum() {
