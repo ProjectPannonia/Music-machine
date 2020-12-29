@@ -97,7 +97,7 @@
                         </HBox>
                         <HBox prefHeight="63.0" prefWidth="1024.0">
                            <children>
-                              <Button mnemonicParsing="false" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
+                              <Button mnemonicParsing="false" onAction="#previousSong" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Button>
@@ -109,7 +109,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Button mnemonicParsing="false" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
+                              <Button mnemonicParsing="false" onAction="#nextSong" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></Button>

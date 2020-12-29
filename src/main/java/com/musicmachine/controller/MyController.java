@@ -84,8 +84,13 @@ public class MyController {
     }
     @FXML
     public void nextSong() {
-//        String nextSong = playerService.giveNextSong();
-//        labelActualSong.setText(nextSong);
+        String nextSong = playerService.giveNextSong();
+        labelActualSong.setText(nextSong);
+    }
+    @FXML
+    public void previousSong() {
+        String previousSong = playerService.givePreviousSong();
+        labelActualSong.setText(previousSong);
     }
     @FXML
     public void add() {
