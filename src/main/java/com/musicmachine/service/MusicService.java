@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class MusicService {
         authorIds = musicRepository.getIds();
         Collections.sort(authorIds);
 
-        if(!authorIds.isEmpty()) {
+        if (!authorIds.isEmpty()) {
             actualAuthorCounter = authorIds.get(0);
         }
         authorIdsSize = authorIds.size();
@@ -58,14 +57,14 @@ public class MusicService {
         List<String> registeredAuthorNames = musicRepository.getAllAuthorNames();
         Collections.sort(registeredAuthorNames);
 
-        return  FXCollections.observableArrayList(registeredAuthorNames);
+        return FXCollections.observableArrayList(registeredAuthorNames);
     }
 
     public String getFirstBandName() {
         Long countBandsInDb = musicRepository.count();
         String firstBandName = "Database empty";
 
-        if(countBandsInDb > 0) {
+        if (countBandsInDb > 0) {
             firstBandName = musicRepository.getOne(actualAuthorCounter).getAuthorName();
         }
         return firstBandName;
@@ -74,17 +73,19 @@ public class MusicService {
     public String giveNextAuthor() {
         actualAuthorsIndex++;
 
-        if(actualAuthorsIndex >= authorIdsSize) actualAuthorsIndex--;
+        if (actualAuthorsIndex >= authorIdsSize) actualAuthorsIndex--;
 
         return musicRepository.getOne(new Long(actualAuthorsIndex)).getAuthorName();
     }
+
     public String givePreviousAuthor() {
         actualAuthorsIndex--;
 
-        if(actualAuthorsIndex < 0) actualAuthorsIndex++;
+        if (actualAuthorsIndex < 0) actualAuthorsIndex++;
 
         return musicRepository.getOne(new Long(actualAuthorsIndex)).getAuthorName();
     }
+
     public String saveNewAuthor(String newAuthorName, String newAlbumName, String newAlbumPath) {
         String response;
         Author searchAuthorInDb = musicRepository.findByName(newAuthorName);
@@ -92,7 +93,7 @@ public class MusicService {
             System.out.println("New author");
             musicRepository.save(new Author(newAuthorName));
             Long createdId = musicRepository.getIdByName(newAuthorName);
-            createAlbum(newAlbumName,createdId,newAlbumPath);
+            createAlbum(newAlbumName, createdId, newAlbumPath);
 
             System.out.println("Created id: " + createdId.toString());
             response = "New author saved";
@@ -113,20 +114,28 @@ public class MusicService {
     private void readMusicFiles(Long albumId, String albumsPath) {
         File[] filesInFolder = new File(albumsPath).listFiles();
         for (File file : filesInFolder) {
-            if (!file.isDirectory()) {
+            if (!file.isDirectory() && isMusicFile(file.getName())) {
                 System.out.println(file.getName() + ", " + file.getAbsolutePath());
                 Song song = new Song(file.getName(), file.getAbsolutePath(), albumId);
                 songRepository.save(song);
             }
         }
-        //saveSonsToDb(filesInFolder, albumId);
     }
 
-    private void saveSonsToDb(File[] filesInFolder, Long albumId) {
-        List<Song> songs = new ArrayList<>();
-        for (File file : filesInFolder) {
-            songRepository.saveWithAlbumId(file.getName(),file.getAbsolutePath(), albumId);
+    private boolean isMusicFile(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf(".");
+        System.out.println("Last dot index: " + lastDotIndex);
+        String format = fileName.substring(lastDotIndex + 1).toLowerCase();
+        System.out.println("Format: " + format);
+        boolean itIsMusicFile = false;
+
+        if(format.equals("mp3")){
+            itIsMusicFile = true;
+        }else if(format.equals("wav")){
+            itIsMusicFile = true;
         }
+        System.out.println("Music file: " + itIsMusicFile);
+        return itIsMusicFile;
     }
 
     public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath) {
