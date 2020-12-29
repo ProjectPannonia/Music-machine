@@ -111,6 +111,19 @@ public class MusicService {
         readMusicFiles(albumId, albumsPath);
     }
 
+
+    public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath) {
+        String saveResponse = "Invalid data";
+        Long authorId = musicRepository.getIdByName(authorName);
+        boolean isAlbumExist = checkAlbumNameInDb(newAlbumName);
+        if(!isAlbumExist){
+            albumRepository.save(new Album(newAlbumName,authorId));
+            Long savedAlbumId = albumRepository.getAlbumIdByName(newAlbumName);
+            readMusicFiles(savedAlbumId, newAlbumPath);
+            saveResponse = newAlbumName + " saved.";
+        }
+        return saveResponse;
+    }
     private void readMusicFiles(Long albumId, String albumsPath) {
         File[] filesInFolder = new File(albumsPath).listFiles();
         for (File file : filesInFolder) {
@@ -120,6 +133,11 @@ public class MusicService {
                 songRepository.save(song);
             }
         }
+    }
+    private boolean checkAlbumNameInDb(String newAlbumName) {
+        Album album = albumRepository.getAlbumByName(newAlbumName);
+
+        return album != null ? true : false;
     }
 
     private boolean isMusicFile(String fileName) {
@@ -138,13 +156,7 @@ public class MusicService {
         return itIsMusicFile;
     }
 
-    public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath) {
-        String saveResponse = "Invalid data";
-        Long authorId = musicRepository.getIdByName(authorName);
-        //saveAlbumForAuthor(authorId, newAlbumName, newAlbumPath);
 
-        return saveResponse;
-    }
 
 
     public void exit() {
