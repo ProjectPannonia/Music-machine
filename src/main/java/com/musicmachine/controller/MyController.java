@@ -26,6 +26,8 @@ public class MyController {
     @FXML
     private CheckBox checkboxNewAuthor;
 
+    private Thread playThread;
+
     private PlayerService playerService;
     private RegisterService registerService;
 
@@ -108,10 +110,21 @@ public class MyController {
     }
     @FXML
     public void play() {
+        playThread = new Thread();
+
         String bandName = labelActualAuthor.getText();
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
-        playerService.playSong(bandName,albumName,songName);
+        if (playThread.isAlive()) {
+            playThread.stop();
+        }
+        Runnable runnable = () -> playerService.playSong(bandName,albumName,songName);
+        playThread = new Thread(runnable);
+        playThread.start();
+    }
+    @FXML
+    public void stop() {
+        if (playThread.isAlive()) playThread.stop();
     }
     @FXML
     public void add() {
