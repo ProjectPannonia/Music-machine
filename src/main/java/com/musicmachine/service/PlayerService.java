@@ -4,11 +4,17 @@ import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.AuthorRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.repository.entities.Song;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import org.apache.catalina.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.sampled.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -168,6 +174,35 @@ public class PlayerService {
     }
 
     private void play(String pathToSong) {
-        
+        try {
+            FileInputStream fileInputStream = new FileInputStream(pathToSong);
+            Player player = new Player(fileInputStream);
+            player.play();
+            System.out.println("Playing!");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (JavaLayerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void playWaw(String pathToSong) {
+        Long currentFrame;
+        Clip clip;
+        AudioInputStream audioInputStream;
+        String status;
+
+        try {
+            audioInputStream = AudioSystem.getAudioInputStream(new File(pathToSong).getAbsoluteFile());
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 }
