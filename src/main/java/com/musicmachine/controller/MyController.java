@@ -1,5 +1,6 @@
 package com.musicmachine.controller;
 
+import com.musicmachine.service.PlayerQuarterMaster;
 import com.musicmachine.service.RegisterService;
 import com.musicmachine.service.PlayerService;
 import javafx.fxml.FXML;
@@ -30,11 +31,13 @@ public class MyController {
 
     private PlayerService playerService;
     private RegisterService registerService;
+    private PlayerQuarterMaster playerQuarterMaster;
 
     @Autowired
-    public MyController(PlayerService playerService, RegisterService registerService) {
+    public MyController(PlayerService playerService, RegisterService registerService, PlayerQuarterMaster playerQuarterMaster) {
         this.playerService = playerService;
         this.registerService = registerService;
+        this.playerQuarterMaster = playerQuarterMaster;
     }
 
     private String actualAuthorName;
@@ -62,6 +65,7 @@ public class MyController {
         textfieldNewBand.setDisable(true);
         checkboxNewAuthor.setSelected(false);
 
+        playThread = new Thread();
     }
 
     @FXML
@@ -110,21 +114,15 @@ public class MyController {
     }
     @FXML
     public void play() {
-        playThread = new Thread();
-
         String bandName = labelActualAuthor.getText();
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
-        if (playThread.isAlive()) {
-            playThread.stop();
-        }
-        Runnable runnable = () -> playerService.playSong(bandName,albumName,songName);
-        playThread = new Thread(runnable);
-        playThread.start();
+
+        playerQuarterMaster.play(bandName,albumName,songName);
     }
     @FXML
     public void stop() {
-        if (playThread.isAlive()) playThread.stop();
+        playerQuarterMaster.stopSong();
     }
     @FXML
     public void add() {

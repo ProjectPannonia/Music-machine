@@ -35,6 +35,8 @@ public class PlayerService {
     private int songListSize;
     private int songNamesListIndex;
 
+
+
     AuthorRepository authorRepository;
     AlbumRepository albumRepository;
     SongRepository songRepository;
@@ -162,30 +164,6 @@ public class PlayerService {
         return songNamesList.get(songNamesListIndex);
     }
 
-
-    public void playSong(String bandName, String albumName, String songName) {
-        Long bandId = authorRepository.getIdByName(bandName);
-        Long albumId = albumRepository.getAlbumIdByName(albumName);
-        Long songId = songRepository.getSongIDBySongName(albumId,songName);
-        System.out.println("Band id: " + bandId + ", albumId: " + albumId + ", songId: " + songId);
-        Song song = songRepository.getSongBySongId(songId);
-        System.out.println("Song path: " + song.getPathToSong());
-        play(song.getPathToSong());
-    }
-
-    private void play(String pathToSong) {
-        try {
-            FileInputStream fileInputStream = new FileInputStream(pathToSong);
-            Player player = new Player(fileInputStream);
-            player.play();
-            System.out.println("Playing!");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (JavaLayerException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void playWaw(String pathToSong) {
         Long currentFrame;
         Clip clip;
@@ -204,5 +182,49 @@ public class PlayerService {
         } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> getAuthorNamesList() {
+        return authorNamesList;
+    }
+
+    public int getAuthorsListSize() {
+        return authorsListSize;
+    }
+
+    public int getAuthorNamesListIndex() {
+        return authorNamesListIndex;
+    }
+
+    public Long getAuthorOnAirId() {
+        return authorOnAirId;
+    }
+
+    public List<String> getAlbumNamesList() {
+        return albumNamesList;
+    }
+
+    public int getAlbumListSize() {
+        return albumListSize;
+    }
+
+    public int getAlbumNamesListIndex() {
+        return albumNamesListIndex;
+    }
+
+    public Long getAlbumOnAirId() {
+        return albumOnAirId;
+    }
+
+    public List<String> getSongNamesList() {
+        return songNamesList;
+    }
+
+    public int getSongListSize() {
+        return songListSize;
+    }
+
+    public int getSongNamesListIndex() {
+        return songNamesListIndex;
     }
 }
