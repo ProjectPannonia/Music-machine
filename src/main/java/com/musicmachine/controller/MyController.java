@@ -1,6 +1,6 @@
 package com.musicmachine.controller;
 
-import com.musicmachine.service.PlayerQuarterMaster;
+import com.musicmachine.service.PlayerQuarterMasterService;
 import com.musicmachine.service.RegisterService;
 import com.musicmachine.service.PlayerService;
 import javafx.fxml.FXML;
@@ -31,13 +31,13 @@ public class MyController {
 
     private PlayerService playerService;
     private RegisterService registerService;
-    private PlayerQuarterMaster playerQuarterMaster;
+    private PlayerQuarterMasterService playerQuarterMasterService;
 
     @Autowired
-    public MyController(PlayerService playerService, RegisterService registerService, PlayerQuarterMaster playerQuarterMaster) {
+    public MyController(PlayerService playerService, RegisterService registerService, PlayerQuarterMasterService playerQuarterMasterService) {
         this.playerService = playerService;
         this.registerService = registerService;
-        this.playerQuarterMaster = playerQuarterMaster;
+        this.playerQuarterMasterService = playerQuarterMasterService;
     }
 
     private String actualAuthorName;
@@ -117,12 +117,12 @@ public class MyController {
         String bandName = labelActualAuthor.getText();
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
-
-        playerQuarterMaster.play(bandName,albumName,songName);
+        
+        playerQuarterMasterService.play(bandName,albumName,songName);
     }
     @FXML
     public void stop() {
-        playerQuarterMaster.stopSong();
+        playerQuarterMasterService.stopSong();
     }
     @FXML
     public void add() {

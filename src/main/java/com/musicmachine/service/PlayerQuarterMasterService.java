@@ -13,7 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 @Service
-public class PlayerQuarterMaster {
+public class PlayerQuarterMasterService {
 
     private Thread playing;
     private Player player;
@@ -25,7 +25,7 @@ public class PlayerQuarterMaster {
     private PlayerService playerService;
 
     @Autowired
-    public PlayerQuarterMaster(AuthorRepository authorRepository, AlbumRepository albumRepository, SongRepository songRepository, PlayerService playerService) {
+    public PlayerQuarterMasterService(AuthorRepository authorRepository, AlbumRepository albumRepository, SongRepository songRepository, PlayerService playerService) {
         this.authorRepository = authorRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
@@ -34,12 +34,18 @@ public class PlayerQuarterMaster {
 
     public void play(String authorName, String albumName, String songName) {
         Long bandId = authorRepository.getIdByName(authorName);
+        playerService.setAuthorOnAirId(bandId);
         Long albumId = albumRepository.getAlbumIdByName(albumName);
+        playerService.setAlbumOnAirId(albumId);
         Long songId = songRepository.getSongIDBySongName(albumId,songName);
+
         System.out.println("Band id: " + bandId + ", albumId: " + albumId + ", songId: " + songId);
         Song song = songRepository.getSongBySongId(songId);
         System.out.println("Song path: " + song.getPathToSong());
         playSong(song.getPathToSong());
+    }
+    private void refreshPlayerServiceFields() {
+
     }
 
     private void playSong(String pathToSong) {
@@ -47,14 +53,15 @@ public class PlayerQuarterMaster {
         try {
             FileInputStream fileInputStream = new FileInputStream(pathToSong);
             player = new Player(fileInputStream);
-            putSongOnThread(player);
+            putSongOnThread(player,pathToSong);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (JavaLayerException e) {
             e.printStackTrace();
         }
     }
-    private void putSongOnThread(Player player) {
+    private void putSongOnThread(Player player, String pathToSong) {
+        Long songID = songRepository.getSongIdByPathToSong(pathToSong);
         Runnable runnable = () -> {
             try {
                 player.play();

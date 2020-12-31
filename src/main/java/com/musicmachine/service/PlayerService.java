@@ -188,43 +188,87 @@ public class PlayerService {
         return authorNamesList;
     }
 
+    public void setAuthorNamesList(List<String> authorNamesList) {
+        this.authorNamesList = authorNamesList;
+    }
+
     public int getAuthorsListSize() {
         return authorsListSize;
+    }
+
+    public void setAuthorsListSize(int authorsListSize) {
+        this.authorsListSize = authorsListSize;
     }
 
     public int getAuthorNamesListIndex() {
         return authorNamesListIndex;
     }
 
+    public void setAuthorNamesListIndex(int authorNamesListIndex) {
+        this.authorNamesListIndex = authorNamesListIndex;
+    }
+
     public Long getAuthorOnAirId() {
         return authorOnAirId;
+    }
+
+    public void setAuthorOnAirId(Long authorOnAirId) {
+        this.authorOnAirId = authorOnAirId;
     }
 
     public List<String> getAlbumNamesList() {
         return albumNamesList;
     }
 
+    public void setAlbumNamesList(List<String> albumNamesList) {
+        this.albumNamesList = albumNamesList;
+    }
+
     public int getAlbumListSize() {
         return albumListSize;
+    }
+
+    public void setAlbumListSize(int albumListSize) {
+        this.albumListSize = albumListSize;
     }
 
     public int getAlbumNamesListIndex() {
         return albumNamesListIndex;
     }
 
+    public void setAlbumNamesListIndex(int albumNamesListIndex) {
+        this.albumNamesListIndex = albumNamesListIndex;
+    }
+
     public Long getAlbumOnAirId() {
         return albumOnAirId;
+    }
+
+    public void setAlbumOnAirId(Long albumOnAirId) {
+        this.albumOnAirId = albumOnAirId;
     }
 
     public List<String> getSongNamesList() {
         return songNamesList;
     }
 
+    public void setSongNamesList(List<String> songNamesList) {
+        this.songNamesList = songNamesList;
+    }
+
     public int getSongListSize() {
         return songListSize;
     }
 
+    public void setSongListSize(int songListSize) {
+        this.songListSize = songListSize;
+    }
+
     public int getSongNamesListIndex() {
         return songNamesListIndex;
+    }
+
+    public void setSongNamesListIndex(int songNamesListIndex) {
+        this.songNamesListIndex = songNamesListIndex;
     }
 }
