@@ -14,7 +14,7 @@ public class OnAirData {
     private int actualBandAlbumsSize;
     private int actualBandAlbumsIndex;
 
-
+    private Long songOnAirId;
     private List<String> actualAlbumTrackList;
     private int actualAlbumTrackListSize;
     private int actualAlbumTrackListIndex;
@@ -72,6 +72,10 @@ public class OnAirData {
                 break;
         }
         return firstElement;
+    }
+
+    public boolean hasNextSong() {
+        return actualAlbumTrackListIndex < actualAlbumTrackListSize;
     }
 
     // Getters and Setters
@@ -166,6 +170,11 @@ public class OnAirData {
         this.actualAlbumTrackListIndex = actualAlbumTrackListIndex;
     }
 
+    public Long getSongOnAirId() {
+        return songOnAirId;
+    }
 
-
+    public void setSongOnAirId(Long songOnAirId) {
+        this.songOnAirId = songOnAirId;
+    }
 }

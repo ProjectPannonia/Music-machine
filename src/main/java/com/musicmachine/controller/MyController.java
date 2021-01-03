@@ -101,8 +101,12 @@ public class MyController {
         String bandName = labelActualAuthor.getText();
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
-        playerService.play(bandName,albumName,songName);
+        playerService.refreshOnAirData(bandName,albumName,songName);
+        playerService.play();
+//        if(playerService.getOnAirData().hasNextSong())
+        
     }
+
     @FXML
     public void stop() {
 
