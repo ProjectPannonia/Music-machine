@@ -164,6 +164,10 @@ public class PlayerService {
 
 
     public void refreshOnAirData(String bandName, String albumName, String songName) {
+        onAirData.refreshRegisteredBandsIndex(bandName);
+        onAirData.refreshActualBandAlbumsIndex(albumName);
+        onAirData.refreshActualAlbumTrackListIndex(songName);
+
         Long bandId = bandRepository.getIdByName(bandName);
         onAirData.setBandOnAirId(bandId);
         Long albumId = albumRepository.getAlbumIdByName(albumName);
@@ -188,6 +192,50 @@ public class PlayerService {
             playerThread.start();
         } catch (FileNotFoundException | JavaLayerException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void modifiedPlay() {
+        stopSongOnAir();
+        for (int i = 0; i < onAirData.getActualAlbumTrackListSize(); i++) {
+            Long albumOnAirId = onAirData.getAlbumOnAirId();
+            String songname = onAirData.getActualAlbumTrackList().get(i);
+            Long songOnAirId = songRepository.getSongIDBySongName(albumOnAirId, songname);
+            onAirData.setSongOnAirId(songOnAirId);
+            String songPath = songRepository.getSongBySongId(songOnAirId).getPathToSong();
+            playThis(songPath);
+        }
+    }
+    public void anotherModifiedPlay() {
+        stopSongOnAir();
+
+    }
+
+    public void playThis(String songPath) {
+        FileInputStream fileInputStream;
+
+        try {
+            fileInputStream = new FileInputStream(songPath);
+            player = new Player(fileInputStream);
+            Runnable runnable = () -> {
+                try {
+                    player.play();
+                } catch (JavaLayerException e) {
+                    e.printStackTrace();
+                }
+            };
+            playerThread = new Thread(runnable);
+            playerThread.start();
+            Thread.sleep(5000);
+        } catch (FileNotFoundException | JavaLayerException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void stopSongOnAir() {
+        if (player != null) {
+            player.close();
+            playerThread.interrupt();
         }
     }
 

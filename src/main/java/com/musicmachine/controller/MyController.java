@@ -102,9 +102,9 @@ public class MyController {
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
         playerService.refreshOnAirData(bandName,albumName,songName);
-        playerService.play();
+        playerService.modifiedPlay();
 //        if(playerService.getOnAirData().hasNextSong())
-        
+
     }
 
     @FXML

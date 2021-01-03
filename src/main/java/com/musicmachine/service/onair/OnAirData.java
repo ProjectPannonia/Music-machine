@@ -77,6 +77,18 @@ public class OnAirData {
     public boolean hasNextSong() {
         return actualAlbumTrackListIndex < actualAlbumTrackListSize;
     }
+    public void refreshRegisteredBandsIndex(String bandName) {
+        if(registeredBands.contains(bandName)) registeredBandsIndex = registeredBands.indexOf(bandName);
+    }
+    public void refreshActualBandAlbumsIndex(String albumName){
+        if(actualBandAlbums.contains(albumName)) actualBandAlbumsIndex = actualBandAlbums.indexOf(albumName);
+    }
+    public void refreshActualAlbumTrackListIndex(String songName) {
+        if(actualAlbumTrackList.contains(songName)) actualAlbumTrackListIndex = actualAlbumTrackList.indexOf(songName);
+    }
+    public void increaseSongIndex() {
+        actualAlbumTrackListIndex++;
+    }
 
     // Getters and Setters
     public Long getBandOnAirId() {
@@ -177,4 +189,6 @@ public class OnAirData {
     public void setSongOnAirId(Long songOnAirId) {
         this.songOnAirId = songOnAirId;
     }
+
+
 }
