@@ -4,6 +4,7 @@ import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.service.onair.OnAirData;
+import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,26 +16,12 @@ import java.util.List;
 @Service
 public class PlayerService {
 
-    private List<String> authorNamesList;
-    private int authorsListSize;
-    private int authorNamesListIndex;
-    private Long authorOnAirId;
-
-    private List<String> albumNamesList;
-    private int albumListSize;
-    private int albumNamesListIndex;
-    private Long albumOnAirId;
-
-    private List<String> songNamesList;
-    private int songListSize;
-    private int songNamesListIndex;
     private OnAirData onAirData;
+    private Player player;
 
-
-
-    BandRepository bandRepository;
-    AlbumRepository albumRepository;
-    SongRepository songRepository;
+    private BandRepository bandRepository;
+    private AlbumRepository albumRepository;
+    private SongRepository songRepository;
 
     @Autowired
     public PlayerService(BandRepository bandRepository, AlbumRepository albumRepository, SongRepository songRepository) {
@@ -43,170 +30,108 @@ public class PlayerService {
         this.songRepository = songRepository;
     }
 
+    public OnAirData getOnAirData() {
+        return onAirData;
+    }
+
     public void initialize() {
         onAirData = new OnAirData();
         onAirData.setRegisteredBands(bandRepository.getAllAuthorNames());
-        //authorNamesList = authorRepository.getAllAuthorNames();
-        //authorsListSize = authorNamesList.size();
-        //authorNamesListIndex = 0;
         if(onAirData.getRegisteredBandsSize() > 0) {
-            onAirData.setBandOnAirId(bandRepository.getIdByName(authorNamesList.get(0)));
-            //authorOnAirId = authorRepository.getIdByName(authorNamesList.get(0));
-            onAirData.setActualBandAlbums(albumRepository.findAlbumsByAuthorId(authorOnAirId));
-            //albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
-            //albumListSize = albumNamesList.size();
-            if(onAirData.getActualBandAlbumsSize() > 0){
-                //albumNamesListIndex = 0;
-                onAirData.setAlbumOnAirId(albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex)));
-                //albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
-
-                //songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
-                onAirData.setActualAlbumTrackList(songRepository.getSongsByAlbumId(albumOnAirId));
-                System.out.println("Song list names size: " + songNamesList.size());
-                //songListSize = songNamesList.size();
-                if(onAirData.getActualAlbumTrackListSize() > 0) onAirData.setActualAlbumTrackListIndex(0);
+            // Set the authorOnAirId
+            Long newBandOnAirId = bandRepository.getIdByName(onAirData.giveFirstElement("author"));
+            onAirData.setBandOnAirId(newBandOnAirId);
+            // Set albumNamesList by auhorOnAirId
+            onAirData.setActualBandAlbums(albumRepository.findAlbumsByAuthorId(onAirData.getBandOnAirId()));
+            // If albumNamesList not empty ->
+            if(!onAirData.getActualBandAlbums().isEmpty()){
+                // -> set albumOnAirId
+                onAirData.setAlbumOnAirId(albumRepository.getAlbumIdByName(onAirData.giveFirstElement("album")));
+                onAirData.setActualAlbumTrackList(songRepository.getSongsByAlbumId(onAirData.getAlbumOnAirId()));
+                if(!onAirData.getActualAlbumTrackList().isEmpty())
+                    onAirData.setActualAlbumTrackListIndex(0);
             }
-            //Collections.sort(albumNamesList);
         }
     }
 
-    public String getFirstBandName() {
-        String firstBandName = "Database empty";
-        if(!onAirData.getRegisteredBands().isEmpty())
-            firstBandName = onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());
-            //firstBandName = authorNamesList.get(authorNamesListIndex);
-        //if (!authorNamesList.isEmpty()) firstBandName = authorNamesList.get(authorNamesListIndex);
-
-        return firstBandName;
-    }
-
-    public String getFirstAlbumFromThisAuthor() {
-        String firstAlbumName = "Albums empty";
-        if(!onAirData.getActualBandAlbums().isEmpty())
-            firstAlbumName = onAirData.getActualBandAlbums().get(onAirData.getActualBandAlbumsIndex());
-            //firstAlbumName = albumNamesList.get(albumNamesListIndex);
-        //if (!albumNamesList.isEmpty()) firstAlbumName = albumNamesList.get(albumNamesListIndex);
-        return firstAlbumName;
-    }
-
-    public String getFirstSongfFromAlbum(String actualAlbumName) {
-        String firstSongName = "No registered songs.";
-        Long albumId = albumRepository.getAlbumIdByName(actualAlbumName);
-        onAirData.setActualAlbumTrackList(songRepository.getSongsByAlbumId(albumId));
-        //songNamesList = songRepository.getSongsByAlbumId(albumId);
-
-        if(!onAirData.getActualAlbumTrackList().isEmpty())
-            firstSongName = onAirData.getActualAlbumTrackList().get(onAirData.getActualBandAlbumsIndex());
-            //firstSongName = songNamesList.get(songNamesListIndex);
-        //if (!songNamesList.isEmpty()) firstSongName = songNamesList.get(songNamesListIndex);
-
-        return firstSongName;
-    }
-
-
-
-    public String giveNextBandName() {
-        if(onAirData.getRegisteredBandsIndex()+1 < onAirData.getRegisteredBandsSize()){
-            //onAirData.increaseAuthorNamesListIndex();
-            refreshAlbumNameListAndSongNamesList();
+    public String nextBand() {
+        String nextBand = onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());;
+        if(onAirData.getRegisteredBandsIndex() + 1 < onAirData.getRegisteredBandsSize()) {
+            nextBand = onAirData.getNextBandName();
+            Long nextBandOnAirId = bandRepository.getIdByName(nextBand);
+            onAirData.setBandOnAirId(nextBandOnAirId);
+            refreshBandAlbumList(nextBandOnAirId);
         }
-//        if(authorNamesListIndex + 1 < authorsListSize) {
-//            authorNamesListIndex++;
-//            refreshAlbumNameListAndSongNamesList();
-//        }
-        return onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());
-        //return authorNamesList.get(authorNamesListIndex);
+        return nextBand;
     }
-    public String givePreviousBandName() {
-        if (onAirData.getRegisteredBandsIndex()-1 >= 0) {
-            //onAirData.decreaseAuthorNamesListIndex();
-            refreshAlbumNameListAndSongNamesList();
+    public String previousBand() {
+        String previousBand = onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());
+        if(onAirData.getRegisteredBandsIndex() - 1 >= 0){
+            previousBand = onAirData.getPreviousBandName();
+            Long previousBandOnAirId = bandRepository.getIdByName(previousBand);
+            onAirData.setBandOnAirId(previousBandOnAirId);
+            refreshBandAlbumList(previousBandOnAirId);
         }
-//        if(authorNamesListIndex - 1 >= 0) {
-//            authorNamesListIndex--;
-//            refreshAlbumNameListAndSongNamesList();
-//        }
-        return  onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());
-//        return authorNamesList.get(authorNamesListIndex);
+        return previousBand;
     }
-    // TO - DO refactor
-    private void refreshAlbumNameListAndSongNamesList() {
-        onAirData.setBandOnAirId(bandRepository.getIdByName(onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex())));
-        //authorOnAirId = authorRepository.getIdByName(authorNamesList.get(authorNamesListIndex));
-        // Refresh albums list
-        onAirData.setActualBandAlbums(albumRepository.findAlbumsByAuthorId(onAirData.getBandOnAirId()));
-        //albumNamesList = albumRepository.findAlbumsByAuthorId(authorOnAirId);
-        onAirData.setActualBandAlbumsSize(onAirData.getActualBandAlbums().size());
-        //albumListSize = albumNamesList.size();
-
-        // Set albumNamesListIndex to 0
+    private void refreshBandAlbumList(Long bandId) {
+        List<String> bandAlbums = albumRepository.findAlbumsByAuthorId(bandId);
+        onAirData.setActualBandAlbums(bandAlbums);
+        onAirData.setActualBandAlbumsSize(bandAlbums.size());
         onAirData.setActualBandAlbumsIndex(0);
-        //albumNamesListIndex = 0;
-        // Set albumOnAirId to the first album's albumId
-        onAirData.setAlbumOnAirId(albumRepository.getAlbumIdByName(onAirData.getActualBandAlbums().get(onAirData.getActualBandAlbumsIndex())));
-        //albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
-        // Refresh songs by albumId
-        onAirData.setActualAlbumTrackList(songRepository.getSongsByAlbumId(onAirData.getAlbumOnAirId()));
-        //songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
-        onAirData.setActualAlbumTrackListSize(onAirData.getActualAlbumTrackList().size());
-        //songListSize = songNamesList.size();
+        Long firstAlbumId = albumRepository.getAlbumIdByName(bandAlbums.get(0));
+        refreshAlbumSongList(firstAlbumId);
+    }
+    private void refreshAlbumSongList(Long firstAlbumId) {
+        List<String> songsOnAlbum = songRepository.getSongsByAlbumId(firstAlbumId);
+        onAirData.setActualAlbumTrackList(songsOnAlbum);
+        onAirData.setActualAlbumTrackListSize(songsOnAlbum.size());
         onAirData.setActualAlbumTrackListIndex(0);
-        //songNamesListIndex = 0;
     }
-//    public String giveNextAlbum() {
-//        //if(onAirData.getAlbumNamesListIndex()+1 < onAirData.getAlbumListSize()){
-////        if(onAirData.albumHasNextSong()){
-////            //onAirData.increaseAlbumNamesListIndex();
-////            refreshSongNamesList();
-////        }
-////        if (albumNamesListIndex + 1 < albumListSize) {
-////            albumNamesListIndex++;
-////            refreshSongNamesList();
-////        }
-//        return onAirData.getAlbumNameOnAir();
-//        //return albumNamesList.get(albumNamesListIndex);
-//    }
-//    public String givePreviousAlbum() {
-//        if(onAirData.albumHasPreviousSong()){
-//            onAirData.decreaseAlbumNamesListIndex();
-//            refreshSongNamesList();
-//        }
-////        if(albumNamesListIndex -1 >= 0) {
-////            albumNamesListIndex--;
-////            refreshSongNamesList();
-////        }
-//        //return albumNamesList.get(albumNamesListIndex);
-//        return onAirData.getAlbumNameOnAir();
-//    }
-//    private void refreshSongNamesList() {
-//        // Set albumOnAirId to the next album's albumId
-//        onAirData.setAlbumOnAirId(albumRepository.getAlbumIdByName(onAirData.getAlbumNameOnAir()));
-//        //albumOnAirId = albumRepository.getAlbumIdByName(albumNamesList.get(albumNamesListIndex));
-//        // Refresh songs by albumId
-//        onAirData.setSongNamesList(songRepository.getSongsByAlbumId(onAirData.getAlbumOnAirId()));
-//        //songNamesList = songRepository.getSongsByAlbumId(albumOnAirId);
-//        onAirData.setSongNameListSize(onAirData.getSongNamesList().size());
-//        //songListSize = songNamesList.size();
-//        onAirData.setSongNamesListIndex(0);
-//        //songNamesListIndex = 0;
-//    }
-    public String getBandFirstAlbum() {
-        return onAirData.getActualBandAlbums().get(onAirData.getActualBandAlbumsIndex());
-        //return albumNamesList.get(albumNamesListIndex);
+
+
+    public String giveNextAlbum() {
+        String nextAlbum = onAirData.getActualBandAlbums().get(onAirData.getActualBandAlbumsIndex());
+        if(onAirData.getActualBandAlbumsIndex() + 1 < onAirData.getActualBandAlbumsSize()){
+            nextAlbum = onAirData.getNextAlbumName();
+            Long nextAlbumOnAirId = albumRepository.getAlbumIdByName(nextAlbum);
+            onAirData.setAlbumOnAirId(nextAlbumOnAirId);
+            refreshSongList(nextAlbumOnAirId);
+        }
+        return nextAlbum;
     }
-    public String getFirstSongNameFromAlbum() {
-        return onAirData.getActualAlbumTrackList().get(onAirData.getActualAlbumTrackListIndex());
-        //return songNamesList.get(songNamesListIndex);
+    public String givePreviousAlbum() {
+        String previousAlbum = onAirData.getActualBandAlbums().get(onAirData.getActualBandAlbumsIndex());
+        if(onAirData.getActualBandAlbumsIndex() - 1 >= 0) {
+            previousAlbum = onAirData.getPreviousAlbumName();
+            Long previousAlbumOnAirId = albumRepository.getAlbumIdByName(previousAlbum);
+            onAirData.setAlbumOnAirId(previousAlbumOnAirId);
+            refreshSongList(previousAlbumOnAirId);
+        }
+        return previousAlbum;
     }
+    private void refreshSongList(Long nextAlbumOnAirId) {
+        List<String> songsOnAlbum = songRepository.getSongsByAlbumId(nextAlbumOnAirId);
+        onAirData.setActualAlbumTrackList(songsOnAlbum);
+        onAirData.setActualAlbumTrackListSize(songsOnAlbum.size());
+        onAirData.setActualAlbumTrackListIndex(0);
+    }
+
 
     public String giveNextSong() {
-        if(songNamesListIndex + 1 < songListSize) songNamesListIndex++;
-        return songNamesList.get(songNamesListIndex);
-    }
+        String nextSong = onAirData.getActualAlbumTrackList().get(onAirData.getActualAlbumTrackListIndex());
 
+        if(onAirData.getActualAlbumTrackListIndex() + 1 < onAirData.getActualAlbumTrackListSize())
+            nextSong = onAirData.getNextSongName();
+
+        return nextSong;
+    }
     public String givePreviousSong() {
-        if(songNamesListIndex - 1 >= 0) songNamesListIndex--;
-        return songNamesList.get(songNamesListIndex);
+        String previousSong = onAirData.getActualAlbumTrackList().get(onAirData.getActualAlbumTrackListIndex());
+        if(onAirData.getActualAlbumTrackListIndex() - 1 >= 0)
+            previousSong = onAirData.getPreviousSongName();
+
+        return previousSong;
     }
 
     private void playWaw(String pathToSong) {
@@ -229,91 +154,4 @@ public class PlayerService {
         }
     }
 
-    public List<String> getAuthorNamesList() {
-        return authorNamesList;
-    }
-
-    public void setAuthorNamesList(List<String> authorNamesList) {
-        this.authorNamesList = authorNamesList;
-    }
-
-    public int getAuthorsListSize() {
-        return authorsListSize;
-    }
-
-    public void setAuthorsListSize(int authorsListSize) {
-        this.authorsListSize = authorsListSize;
-    }
-
-    public int getAuthorNamesListIndex() {
-        return authorNamesListIndex;
-    }
-
-    public void setAuthorNamesListIndex(int authorNamesListIndex) {
-        this.authorNamesListIndex = authorNamesListIndex;
-    }
-
-    public Long getAuthorOnAirId() {
-        return authorOnAirId;
-    }
-
-    public void setAuthorOnAirId(Long authorOnAirId) {
-        this.authorOnAirId = authorOnAirId;
-    }
-
-    public List<String> getAlbumNamesList() {
-        return albumNamesList;
-    }
-
-    public void setAlbumNamesList(List<String> albumNamesList) {
-        this.albumNamesList = albumNamesList;
-    }
-
-    public int getAlbumListSize() {
-        return albumListSize;
-    }
-
-    public void setAlbumListSize(int albumListSize) {
-        this.albumListSize = albumListSize;
-    }
-
-    public int getAlbumNamesListIndex() {
-        return albumNamesListIndex;
-    }
-
-    public void setAlbumNamesListIndex(int albumNamesListIndex) {
-        this.albumNamesListIndex = albumNamesListIndex;
-    }
-
-    public Long getAlbumOnAirId() {
-        return albumOnAirId;
-    }
-
-    public void setAlbumOnAirId(Long albumOnAirId) {
-        this.albumOnAirId = albumOnAirId;
-    }
-
-    public List<String> getSongNamesList() {
-        return songNamesList;
-    }
-
-    public void setSongNamesList(List<String> songNamesList) {
-        this.songNamesList = songNamesList;
-    }
-
-    public int getSongListSize() {
-        return songListSize;
-    }
-
-    public void setSongListSize(int songListSize) {
-        this.songListSize = songListSize;
-    }
-
-    public int getSongNamesListIndex() {
-        return songNamesListIndex;
-    }
-
-    public void setSongNamesListIndex(int songNamesListIndex) {
-        this.songNamesListIndex = songNamesListIndex;
-    }
 }

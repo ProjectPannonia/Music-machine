@@ -31,59 +31,59 @@ public class PlayerQuarterMasterService {
         this.playerService = playerService;
     }
 
-    public void play(String authorName, String albumName, String songName) {
-        Long bandId = bandRepository.getIdByName(authorName);
-        playerService.setAuthorOnAirId(bandId);
-        Long albumId = albumRepository.getAlbumIdByName(albumName);
-        playerService.setAlbumOnAirId(albumId);
-        Long songId = songRepository.getSongIDBySongName(albumId,songName);
-        refreshPlayerServiceFields(bandId, albumId);
-        System.out.println("Band id: " + bandId + ", albumId: " + albumId + ", songId: " + songId);
-        Song song = songRepository.getSongBySongId(songId);
-        System.out.println("Song path: " + song.getPathToSong());
-        playSong(song.getPathToSong());
-    }
-    private void refreshPlayerServiceFields(Long authorOnAirId, Long albumOnAirId) {
-        playerService.setAuthorOnAirId(authorOnAirId);
-        playerService.setAlbumOnAirId(albumOnAirId);
-    }
-
-    private void playSong(String pathToSong) {
-        stopSongOnAir();
-        try {
-            FileInputStream fileInputStream = new FileInputStream(pathToSong);
-            player = new Player(fileInputStream);
-            putSongOnThread(player,pathToSong);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (JavaLayerException e) {
-            e.printStackTrace();
-        }
-    }
-    private void putSongOnThread(Player player, String pathToSong) {
-        Long songID = songRepository.getSongIdByPathToSong(pathToSong);
-        Runnable runnable = () -> {
-            try {
-                player.play();
-            } catch (JavaLayerException e) {
-                e.printStackTrace();
-            }
-        };
-
-        playing = new Thread(runnable);
-        playing.start();
-
-    }
-    private void stopSongOnAir() {
-        if(player != null) {
-            player.close();
-            playing.interrupt();
-        }
-    }
-    public void stopSong() {
-        stopSongOnAir();
-    }
-    public boolean playerActive(){
-        return player.isComplete();
-    }
+//    public void play(String authorName, String albumName, String songName) {
+//        Long bandId = bandRepository.getIdByName(authorName);
+//        playerService.setAuthorOnAirId(bandId);
+//        Long albumId = albumRepository.getAlbumIdByName(albumName);
+//        playerService.setAlbumOnAirId(albumId);
+//        Long songId = songRepository.getSongIDBySongName(albumId,songName);
+//        refreshPlayerServiceFields(bandId, albumId);
+//        System.out.println("Band id: " + bandId + ", albumId: " + albumId + ", songId: " + songId);
+//        Song song = songRepository.getSongBySongId(songId);
+//        System.out.println("Song path: " + song.getPathToSong());
+//        playSong(song.getPathToSong());
+//    }
+//    private void refreshPlayerServiceFields(Long authorOnAirId, Long albumOnAirId) {
+//        playerService.setAuthorOnAirId(authorOnAirId);
+//        playerService.setAlbumOnAirId(albumOnAirId);
+//    }
+//
+//    private void playSong(String pathToSong) {
+//        stopSongOnAir();
+//        try {
+//            FileInputStream fileInputStream = new FileInputStream(pathToSong);
+//            player = new Player(fileInputStream);
+//            putSongOnThread(player,pathToSong);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (JavaLayerException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//    private void putSongOnThread(Player player, String pathToSong) {
+//        Long songID = songRepository.getSongIdByPathToSong(pathToSong);
+//        Runnable runnable = () -> {
+//            try {
+//                player.play();
+//            } catch (JavaLayerException e) {
+//                e.printStackTrace();
+//            }
+//        };
+//
+//        playing = new Thread(runnable);
+//        playing.start();
+//
+//    }
+//    private void stopSongOnAir() {
+//        if(player != null) {
+//            player.close();
+//            playing.interrupt();
+//        }
+//    }
+//    public void stopSong() {
+//        stopSongOnAir();
+//    }
+//    public boolean playerActive(){
+//        return player.isComplete();
+//    }
 }
