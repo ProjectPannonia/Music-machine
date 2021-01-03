@@ -101,7 +101,7 @@ public class MyController {
         String bandName = labelActualAuthor.getText();
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
-        //playerQuarterMasterService.play(bandName,albumName,songName);
+        playerService.play(bandName,albumName,songName);
     }
     @FXML
     public void stop() {

@@ -3,6 +3,7 @@ package com.musicmachine.service;
 import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
+import com.musicmachine.repository.entities.Song;
 import com.musicmachine.service.onair.OnAirData;
 import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ public class PlayerService {
 
     private OnAirData onAirData;
     private Player player;
+    private Thread playerThread;
 
     private BandRepository bandRepository;
     private AlbumRepository albumRepository;
@@ -28,10 +30,6 @@ public class PlayerService {
         this.bandRepository = bandRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
-    }
-
-    public OnAirData getOnAirData() {
-        return onAirData;
     }
 
     public void initialize() {
@@ -154,4 +152,37 @@ public class PlayerService {
         }
     }
 
+
+    public void play(String bandName, String albumName, String songName) {
+        refreshOnAirData(bandName, albumName, songName);
+    }
+    private void refreshOnAirData(String bandName, String albumName, String songName){
+        Long bandId = bandRepository.getIdByName(bandName);
+        onAirData.setBandOnAirId(bandId);
+        Long albumId = albumRepository.getAlbumIdByName(albumName);
+        onAirData.setAlbumOnAirId(albumId);
+        Long songId = songRepository.getSongIDBySongName(albumId,songName);
+        Song song = songRepository.getSongBySongId(songId);
+    }
+
+    // Getters and setters
+    public OnAirData getOnAirData() {
+        return onAirData;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public Thread getPlayerThread() {
+        return playerThread;
+    }
+
+    public void setPlayerThread(Thread playerThread) {
+        this.playerThread = playerThread;
+    }
 }
