@@ -1,6 +1,6 @@
 package com.musicmachine;
 
-import com.musicmachine.repository.AuthorRepository;
+import com.musicmachine.repository.BandRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +23,7 @@ public class TestAuthorRepository {
     @Autowired
     private EntityManager entityManager;
     @Autowired
-    private AuthorRepository authorRepository;
+    private BandRepository bandRepository;
 
 //    @Test
 //    public void injectedCompponentsAreNotNull() {

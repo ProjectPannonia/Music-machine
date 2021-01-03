@@ -1,7 +1,7 @@
 package com.musicmachine.service;
 
 import com.musicmachine.repository.AlbumRepository;
-import com.musicmachine.repository.AuthorRepository;
+import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,25 +16,25 @@ public class SongService {
     private Long actualAuthorId;
     private Long actualAlbumId;
 
-    private AuthorRepository authorRepository;
+    private BandRepository bandRepository;
     private AlbumRepository albumRepository;
     private SongRepository songRepository;
 
     @Autowired
-    public SongService(AuthorRepository authorRepository, AlbumRepository albumRepository, SongRepository songRepository){
-        this.authorRepository = authorRepository;
+    public SongService(BandRepository bandRepository, AlbumRepository albumRepository, SongRepository songRepository){
+        this.bandRepository = bandRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
     }
 
     public ObservableList<String> getSongsByAlbumName(String nextAuthor) {
-        actualAuthorId = authorRepository.getIdByName(nextAuthor);
+        actualAuthorId = bandRepository.getIdByName(nextAuthor);
         //List<String> songList =
         return null;
     }
 
     public ObservableList<String> listAlbumNames(String nextAuthor) {
-        actualAuthorId = authorRepository.getIdByName(nextAuthor);
+        actualAuthorId = bandRepository.getIdByName(nextAuthor);
         List<String> albumNames = albumRepository.findAlbumsByAuthorId(actualAuthorId);
         Collections.sort(albumNames);
 

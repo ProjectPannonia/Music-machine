@@ -1,7 +1,7 @@
 package com.musicmachine.service;
 
 import com.musicmachine.repository.AlbumRepository;
-import com.musicmachine.repository.AuthorRepository;
+import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.repository.entities.Song;
 import javazoom.jl.decoder.JavaLayerException;
@@ -18,34 +18,34 @@ public class PlayerQuarterMasterService {
     private Thread playing;
     private Player player;
 
-    private AuthorRepository authorRepository;
+    private BandRepository bandRepository;
     private AlbumRepository albumRepository;
     private SongRepository songRepository;
-
     private PlayerService playerService;
 
     @Autowired
-    public PlayerQuarterMasterService(AuthorRepository authorRepository, AlbumRepository albumRepository, SongRepository songRepository, PlayerService playerService) {
-        this.authorRepository = authorRepository;
+    public PlayerQuarterMasterService(BandRepository bandRepository, AlbumRepository albumRepository, SongRepository songRepository, PlayerService playerService) {
+        this.bandRepository = bandRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
         this.playerService = playerService;
     }
 
     public void play(String authorName, String albumName, String songName) {
-        Long bandId = authorRepository.getIdByName(authorName);
+        Long bandId = bandRepository.getIdByName(authorName);
         playerService.setAuthorOnAirId(bandId);
         Long albumId = albumRepository.getAlbumIdByName(albumName);
         playerService.setAlbumOnAirId(albumId);
         Long songId = songRepository.getSongIDBySongName(albumId,songName);
-
+        refreshPlayerServiceFields(bandId, albumId);
         System.out.println("Band id: " + bandId + ", albumId: " + albumId + ", songId: " + songId);
         Song song = songRepository.getSongBySongId(songId);
         System.out.println("Song path: " + song.getPathToSong());
         playSong(song.getPathToSong());
     }
-    private void refreshPlayerServiceFields() {
-
+    private void refreshPlayerServiceFields(Long authorOnAirId, Long albumOnAirId) {
+        playerService.setAuthorOnAirId(authorOnAirId);
+        playerService.setAlbumOnAirId(albumOnAirId);
     }
 
     private void playSong(String pathToSong) {
@@ -72,6 +72,7 @@ public class PlayerQuarterMasterService {
 
         playing = new Thread(runnable);
         playing.start();
+
     }
     private void stopSongOnAir() {
         if(player != null) {

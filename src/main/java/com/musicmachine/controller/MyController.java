@@ -3,6 +3,7 @@ package com.musicmachine.controller;
 import com.musicmachine.service.PlayerQuarterMasterService;
 import com.musicmachine.service.RegisterService;
 import com.musicmachine.service.PlayerService;
+import com.musicmachine.service.UpdatedPlayerService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
@@ -32,32 +33,24 @@ public class MyController {
     private PlayerService playerService;
     private RegisterService registerService;
     private PlayerQuarterMasterService playerQuarterMasterService;
+    private UpdatedPlayerService updatedPlayerService;
 
     @Autowired
-    public MyController(PlayerService playerService, RegisterService registerService, PlayerQuarterMasterService playerQuarterMasterService) {
+    public MyController(PlayerService playerService, RegisterService registerService, PlayerQuarterMasterService playerQuarterMasterService, UpdatedPlayerService updatedPlayerService) {
         this.playerService = playerService;
         this.registerService = registerService;
         this.playerQuarterMasterService = playerQuarterMasterService;
+        this.updatedPlayerService = updatedPlayerService;
     }
-
-    private String actualAuthorName;
-    private String actualAlbumName;
-    private String actualSongName;
+    
 
     public void initialize() {
         // MUSIC-BOX PAGE
         // Music service initialize
-        playerService.initialize();
-        // Get first band name from database
-        actualAuthorName = playerService.getFirstBandName();
-        // Initialize Actual author label
-        labelActualAuthor.setText(actualAuthorName);
-        // Initialize Actual album label with actual author's first registered album
-        actualAlbumName = playerService.getFirstAlbumFromThisAuthor();
-        labelActualAlbum.setText(actualAlbumName);
-        // Get first song name from album
-        actualSongName = playerService.getFirstSongfFromAlbum(actualAlbumName);
-        labelActualSong.setText(actualSongName);
+        updatedPlayerService.initialize();
+        labelActualAuthor.setText(updatedPlayerService.getOnAirData().giveFirstElement("author"));
+        labelActualAlbum.setText(updatedPlayerService.getOnAirData().giveFirstElement("album"));
+        labelActualSong.setText(updatedPlayerService.getOnAirData().giveFirstElement("song"));
         // ADD PAGE
         // Add page choose author choicebox initialize -> get registered authors from database
         choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
@@ -68,56 +61,49 @@ public class MyController {
         playThread = new Thread();
     }
 
+
     @FXML
     public void nextBand() {
-        // Update -> band name
-        String nextBandName = playerService.giveNextBandName();
-        String nextBandFirstAlbum = playerService.getBandFirstAlbum();
-        String nextAlbumFirstSongName = playerService.getFirstSongNameFromAlbum();
-        labelActualAuthor.setText(nextBandName);
-        labelActualSong.setText(nextAlbumFirstSongName);
-        labelActualAlbum.setText(nextBandFirstAlbum);
+        labelActualAuthor.setText(updatedPlayerService.nextBand());
+        labelActualAlbum.setText(updatedPlayerService.getOnAirData().getActualBandAlbums().get(0));
+        labelActualSong.setText(updatedPlayerService.getOnAirData().getActualAlbumTrackList().get(0));
     }
     @FXML
     public void previousBand() {
-        String previousBandName = playerService.givePreviousBandName();
-        String previousBandFirstAlbumName = playerService.getBandFirstAlbum();
-        String previousBandFirstSongName = playerService.getFirstSongNameFromAlbum();
-        labelActualAuthor.setText(previousBandName);
-        labelActualAlbum.setText(previousBandFirstAlbumName);
-        labelActualSong.setText(previousBandFirstSongName);
+        labelActualAuthor.setText(updatedPlayerService.previousBand());
+        labelActualAlbum.setText(updatedPlayerService.getOnAirData().getActualBandAlbums().get(0));
+        labelActualSong.setText(updatedPlayerService.getOnAirData().getActualAlbumTrackList().get(0));
 
     }
+
+
     @FXML
     public void nextAlbum() {
-        String nextAlbum = playerService.giveNextAlbum();
-        String nextAlbumFirstSong = playerService.getFirstSongNameFromAlbum();
-        labelActualAlbum.setText(nextAlbum);
-        labelActualSong.setText(nextAlbumFirstSong);
+        labelActualAlbum.setText(updatedPlayerService.giveNextAlbum());
+        labelActualSong.setText(updatedPlayerService.getOnAirData().getActualAlbumTrackList().get(0));
     }
     @FXML
     public void previousAlbum() {
-        String previousAlbum = playerService.givePreviousAlbum();
-        String previousAlbumFirstSong = playerService.getFirstSongNameFromAlbum();
-        labelActualAlbum.setText(previousAlbum);
-        labelActualSong.setText(previousAlbumFirstSong);
+        labelActualAlbum.setText(updatedPlayerService.givePreviousAlbum());
+        labelActualSong.setText(updatedPlayerService.getOnAirData().getActualAlbumTrackList().get(0));
     }
+
+
     @FXML
     public void nextSong() {
-        String nextSong = playerService.giveNextSong();
-        labelActualSong.setText(nextSong);
+        labelActualSong.setText(updatedPlayerService.giveNextSong());
     }
     @FXML
     public void previousSong() {
-        String previousSong = playerService.givePreviousSong();
-        labelActualSong.setText(previousSong);
+        labelActualSong.setText(updatedPlayerService.givePreviousSong());
     }
+
+
     @FXML
     public void play() {
         String bandName = labelActualAuthor.getText();
         String albumName = labelActualAlbum.getText();
         String songName = labelActualSong.getText();
-        
         playerQuarterMasterService.play(bandName,albumName,songName);
     }
     @FXML
