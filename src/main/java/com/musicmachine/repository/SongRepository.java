@@ -25,4 +25,7 @@ public interface SongRepository extends JpaRepository<Song, Long> {
 
     @Query(value = "select s.id from Song s where s.pathToSong = :pathToSong")
     Long getSongIdByPathToSong(@Param("pathToSong") String pathToSong);
+
+    @Query(value = "select s.pathToSong from Song s where s.songName = :songname")
+    String getSongPathBySongName(@Param("songname") String songname);
 }

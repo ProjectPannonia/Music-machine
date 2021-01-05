@@ -1,10 +1,12 @@
 package com.musicmachine.service;
 
+import com.musicmachine.JavaFxApplication;
 import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.repository.entities.Song;
 import com.musicmachine.service.onair.OnAirData;
+import javafx.scene.media.Media;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +25,7 @@ public class PlayerService {
 
     private OnAirData onAirData;
     private Player player;
+    private Thread testThread;
     private Thread playerThread;
 
     private BandRepository bandRepository;
@@ -197,40 +201,47 @@ public class PlayerService {
 
     public void modifiedPlay() {
         stopSongOnAir();
-        for (int i = 0; i < onAirData.getActualAlbumTrackListSize(); i++) {
-            Long albumOnAirId = onAirData.getAlbumOnAirId();
-            String songname = onAirData.getActualAlbumTrackList().get(i);
-            Long songOnAirId = songRepository.getSongIDBySongName(albumOnAirId, songname);
-            onAirData.setSongOnAirId(songOnAirId);
-            String songPath = songRepository.getSongBySongId(songOnAirId).getPathToSong();
-            playThis(songPath);
+        List<String> songnames = onAirData.getActualAlbumTrackList();
+        List<String> songPaths = new ArrayList<>();
+
+        for(int i = 0; i < songnames.size(); i++){
+            songPaths.add(songRepository.getSongPathBySongName(songnames.get(i)));
+            System.out.println(songPaths.get(i));
+        }
+        testThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                playList(songPaths);
+            }
+        });
+        testThread.start();
+    }
+
+    private void playList(List<String> songPaths) {
+        FileInputStream fis;
+        for (int i = 0; i < songPaths.size(); i++){
+            try {
+                fis = new FileInputStream(songPaths.get(i));
+                player = new Player(fis);
+                Runnable runnable = () -> {
+                    try {
+                        player.play();
+                    } catch (JavaLayerException e) {
+                        e.printStackTrace();
+                    }
+                };
+                playerThread = new Thread(runnable);
+                playerThread.start();
+                do {
+                    Thread.sleep(10);
+                    System.out.println("Slow");
+                }while (!player.isComplete());
+            } catch (FileNotFoundException | JavaLayerException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
-    public void anotherModifiedPlay() {
-        stopSongOnAir();
 
-    }
-
-    public void playThis(String songPath) {
-        FileInputStream fileInputStream;
-
-        try {
-            fileInputStream = new FileInputStream(songPath);
-            player = new Player(fileInputStream);
-            Runnable runnable = () -> {
-                try {
-                    player.play();
-                } catch (JavaLayerException e) {
-                    e.printStackTrace();
-                }
-            };
-            playerThread = new Thread(runnable);
-            playerThread.start();
-            Thread.sleep(5000);
-        } catch (FileNotFoundException | JavaLayerException | InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void stopSongOnAir() {
         if (player != null) {
