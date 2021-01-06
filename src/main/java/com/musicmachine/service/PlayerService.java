@@ -1,12 +1,10 @@
 package com.musicmachine.service;
 
-import com.musicmachine.JavaFxApplication;
 import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.repository.entities.Song;
 import com.musicmachine.service.onair.OnAirData;
-import javafx.scene.media.Media;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,12 +206,7 @@ public class PlayerService {
             songPaths.add(songRepository.getSongPathBySongName(songnames.get(i)));
             System.out.println(songPaths.get(i));
         }
-        testThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                playList(songPaths);
-            }
-        });
+        testThread = new Thread(() -> playList(songPaths));
         testThread.start();
     }
 
