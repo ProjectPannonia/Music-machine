@@ -32,17 +32,17 @@
                               <Insets top="5.0" />
                            </VBox.margin>
                            <children>
-                              <Button mnemonicParsing="false" onAction="#play" prefHeight="43.0" prefWidth="148.0" text="Play">
+                              <Button fx:id="playBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="43.0" prefWidth="148.0" text="Play">
                                  <HBox.margin>
                                     <Insets left="270.0" right="20.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" onAction="#stop" prefHeight="43.0" prefWidth="148.0" text="Stop">
+                              <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="43.0" prefWidth="148.0" text="Stop">
                                  <HBox.margin>
                                     <Insets right="20.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button mnemonicParsing="false" prefHeight="43.0" prefWidth="148.0" text="Pause">
+                              <Button fx:id="pauseBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="43.0" prefWidth="148.0" text="Pause">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -51,7 +51,7 @@
                         </HBox>
                         <HBox prefHeight="63.0" prefWidth="1024.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#previousBand" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
+                              <Button fx:id="prevAuthorBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Button>
@@ -63,7 +63,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#nextBand" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
+                              <Button fx:id="nextAuthorBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></Button>
@@ -74,7 +74,7 @@
                         </HBox>
                         <HBox prefHeight="63.0" prefWidth="1024.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#previousAlbum" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
+                              <Button fx:id="prevAlbumBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Button>
@@ -86,7 +86,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#nextAlbum" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
+                              <Button fx:id="nextAlbumBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></Button>
@@ -97,7 +97,7 @@
                         </HBox>
                         <HBox prefHeight="63.0" prefWidth="1024.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#previousSong" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
+                              <Button fx:id="prevSongBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Button>
@@ -109,7 +109,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Button mnemonicParsing="false" onAction="#nextSong" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
+                              <Button fx:id="nextSongBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></Button>
@@ -122,7 +122,7 @@
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" />
                            </VBox.margin></TableView>
-                        <Button alignment="CENTER" mnemonicParsing="false" onAction="#quit" prefHeight="43.0" prefWidth="148.0" text="Exit">
+                        <Button fx:id="quitBtn" alignment="CENTER" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="43.0" prefWidth="148.0" text="Exit">
                            <VBox.margin>
                               <Insets left="450.0" top="10.0" />
                            </VBox.margin></Button>
@@ -164,7 +164,7 @@
                                           <Insets left="10.0" />
                                        </HBox.margin>
                                     </ChoiceBox>
-                                    <CheckBox fx:id="checkboxNewAuthor" mnemonicParsing="false" onAction="#newAuthorChecked" text="New author">
+                                    <CheckBox fx:id="newAuthorChb" mnemonicParsing="false" onAction="#buttonHandler" text="New author">
                                        <HBox.margin>
                                           <Insets left="25.0" />
                                        </HBox.margin>
@@ -208,7 +208,7 @@
                                           <Insets left="10.0" right="10.0" top="5.0" />
                                        </HBox.margin>
                                     </TextField>
-                                    <Button fx:id="buttonAddBrowseAlbum" maxHeight="37.0" maxWidth="75.0" minHeight="37.0" minWidth="75.0" mnemonicParsing="false" onAction="#add" prefHeight="37.0" prefWidth="75.0" text="Browse">
+                                    <Button fx:id="browseAlbumBtn" maxHeight="37.0" maxWidth="75.0" minHeight="37.0" minWidth="75.0" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="37.0" prefWidth="75.0" text="Browse">
                                        <HBox.margin>
                                           <Insets right="10.0" />
                                        </HBox.margin>
@@ -228,7 +228,7 @@
                                     <Font size="18.0" />
                                  </font>
                               </Label>
-                              <Button fx:id="buuttonAddSave" mnemonicParsing="false" onAction="#save" prefHeight="37.0" prefWidth="75.0" text="Save">
+                              <Button fx:id="saveBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="37.0" prefWidth="75.0" text="Save">
                                  <VBox.margin>
                                     <Insets bottom="5.0" left="270.0" top="5.0" />
                                  </VBox.margin>

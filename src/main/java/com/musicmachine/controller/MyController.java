@@ -3,6 +3,7 @@ package com.musicmachine.controller;
 import com.musicmachine.service.PlayerQuarterMasterService;
 import com.musicmachine.service.RegisterService;
 import com.musicmachine.service.PlayerService;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
@@ -25,7 +26,9 @@ public class MyController {
     @FXML
     private TextField textfieldNewBand, textfieldNewAlbumsName, textfieldNewAlbumPath;
     @FXML
-    private CheckBox checkboxNewAuthor;
+    private CheckBox newAuthorChb;
+    @FXML
+    private Button nextAuthorBtn, prevAuthorBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn;
 
     private Thread playThread;
 
@@ -53,65 +56,78 @@ public class MyController {
         choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
         tableAdd.setEditable(true);
         textfieldNewBand.setDisable(true);
-        checkboxNewAuthor.setSelected(false);
+        newAuthorChb.setSelected(false);
 
         playThread = new Thread();
     }
 
-
     @FXML
-    public void nextBand() {
-        labelActualAuthor.setText(playerService.nextBand());
-        labelActualAlbum.setText(playerService.getOnAirData().getActualBandAlbums().get(0));
-        labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
-    }
-    @FXML
-    public void previousBand() {
-        labelActualAuthor.setText(playerService.previousBand());
-        labelActualAlbum.setText(playerService.getOnAirData().getActualBandAlbums().get(0));
-        labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
-
-    }
-
-
-    @FXML
-    public void nextAlbum() {
-        labelActualAlbum.setText(playerService.giveNextAlbum());
-        labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
-    }
-    @FXML
-    public void previousAlbum() {
-        labelActualAlbum.setText(playerService.givePreviousAlbum());
-        labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
-    }
-
-
-    @FXML
-    public void nextSong() {
-        labelActualSong.setText(playerService.giveNextSong());
-    }
-    @FXML
-    public void previousSong() {
-        labelActualSong.setText(playerService.givePreviousSong());
-    }
-
-
-    @FXML
-    public void play() {
-        String bandName = labelActualAuthor.getText();
-        String albumName = labelActualAlbum.getText();
-        String songName = labelActualSong.getText();
-        playerService.refreshOnAirData(bandName,albumName,songName);
-        playerService.modifiedPlay();
+    public void buttonHandler(ActionEvent e) {
+        if (e.getSource() == nextAuthorBtn) {
+            labelActualAuthor.setText(playerService.nextBand());
+            labelActualAlbum.setText(playerService.getOnAirData().getActualBandAlbums().get(0));
+            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+        } else if (e.getSource() == prevAuthorBtn) {
+            labelActualAuthor.setText(playerService.previousBand());
+            labelActualAlbum.setText(playerService.getOnAirData().getActualBandAlbums().get(0));
+            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+        } else if (e.getSource() == nextAlbumBtn) {
+            labelActualAlbum.setText(playerService.giveNextAlbum());
+            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+        } else if (e.getSource() == prevAlbumBtn) {
+            labelActualAlbum.setText(playerService.givePreviousAlbum());
+            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+        } else if (e.getSource() == nextSongBtn) {
+            labelActualSong.setText(playerService.giveNextSong());
+        } else if (e.getSource() == prevSongBtn) {
+            labelActualSong.setText(playerService.givePreviousSong());
+        } else if (e.getSource() == playBtn) {
+            String bandName = labelActualAuthor.getText();
+            String albumName = labelActualAlbum.getText();
+            String songName = labelActualSong.getText();
+            playerService.refreshOnAirData(bandName, albumName, songName);
+            playerService.modifiedPlay();
 //        if(playerService.getOnAirData().hasNextSong())
 
+        } else if (e.getSource() == pauseBtn) {
+
+        } else if (e.getSource() == stopBtn) {
+
+        } else if (e.getSource() == quitBtn) {
+            registerService.exit();
+        } else if (e.getSource() == saveBtn) {
+            String responseAfterSave;
+
+            if (newAuthorChb.isSelected()) {
+                responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+            } else {
+                responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+            }
+            labelSaveResponse.setText(responseAfterSave);
+        } else if (e.getSource() == browseAlbumBtn) {
+            DirectoryChooser dir = registerService.getDirectory();
+            File files = dir.showDialog(null);
+            textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
+        } else if (e.getSource() == newAuthorChb) {
+            if (newAuthorChb.isSelected()) {
+                textfieldNewBand.setDisable(false);
+                choiceboxAddAuthor.setDisable(true);
+            } else {
+                textfieldNewBand.setDisable(true);
+                choiceboxAddAuthor.setDisable(false);
+            }
+        }
     }
+
+
+
 
     @FXML
     public void stop() {
 
         //playerQuarterMasterService.stopSong();
     }
+
     @FXML
     public void add() {
         DirectoryChooser dir = registerService.getDirectory();
@@ -119,29 +135,27 @@ public class MyController {
 
         textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
     }
+
     @FXML
     public void newAuthorChecked() {
-        if(checkboxNewAuthor.isSelected()){
+        if (newAuthorChb.isSelected()) {
             textfieldNewBand.setDisable(false);
             choiceboxAddAuthor.setDisable(true);
-        }else{
+        } else {
             textfieldNewBand.setDisable(true);
             choiceboxAddAuthor.setDisable(false);
         }
     }
+
     @FXML
     public void save() {
         String responseAfterSave;
 
-        if(checkboxNewAuthor.isSelected()) {
+        if (newAuthorChb.isSelected()) {
             responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
         } else {
             responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
         }
         labelSaveResponse.setText(responseAfterSave);
-    }
-
-    public void quit() {
-        registerService.exit();
     }
 }
