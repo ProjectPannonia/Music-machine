@@ -118,44 +118,4 @@ public class MyController {
             }
         }
     }
-
-
-
-
-    @FXML
-    public void stop() {
-
-        //playerQuarterMasterService.stopSong();
-    }
-
-    @FXML
-    public void add() {
-        DirectoryChooser dir = registerService.getDirectory();
-        File files = dir.showDialog(null);
-
-        textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
-    }
-
-    @FXML
-    public void newAuthorChecked() {
-        if (newAuthorChb.isSelected()) {
-            textfieldNewBand.setDisable(false);
-            choiceboxAddAuthor.setDisable(true);
-        } else {
-            textfieldNewBand.setDisable(true);
-            choiceboxAddAuthor.setDisable(false);
-        }
-    }
-
-    @FXML
-    public void save() {
-        String responseAfterSave;
-
-        if (newAuthorChb.isSelected()) {
-            responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
-        } else {
-            responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
-        }
-        labelSaveResponse.setText(responseAfterSave);
-    }
 }
