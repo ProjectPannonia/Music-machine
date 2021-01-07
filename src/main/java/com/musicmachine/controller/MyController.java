@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.EventObject;
 
 @Component
 @FxmlView("music-machine.fxml")
@@ -45,47 +46,37 @@ public class MyController {
 
 
     public void initialize() {
-        // MUSIC-BOX PAGE
         // Music service initialize
         playerService.initialize();
+        initializeUserInterface();
+        playThread = new Thread();
+    }
+    private void initializeUserInterface(){
         labelActualAuthor.setText(playerService.getOnAirData().giveFirstElement("author"));
         labelActualAlbum.setText(playerService.getOnAirData().giveFirstElement("album"));
         labelActualSong.setText(playerService.getOnAirData().giveFirstElement("song"));
-        // ADD PAGE
-        // Add page choose author choicebox initialize -> get registered authors from database
         choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
         tableAdd.setEditable(true);
         textfieldNewBand.setDisable(true);
         newAuthorChb.setSelected(false);
-
-        playThread = new Thread();
     }
 
     @FXML
     public void buttonHandler(ActionEvent e) {
         if (e.getSource() == nextAuthorBtn) {
-            labelActualAuthor.setText(playerService.nextBand());
-            labelActualAlbum.setText(playerService.getOnAirData().getActualBandAlbums().get(0));
-            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+            updateFields(playerService.nextBand(), playerService.getOnAirData().getActualBandAlbums().get(0), playerService.getOnAirData().getActualAlbumTrackList().get(0));
         } else if (e.getSource() == prevAuthorBtn) {
-            labelActualAuthor.setText(playerService.previousBand());
-            labelActualAlbum.setText(playerService.getOnAirData().getActualBandAlbums().get(0));
-            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+            updateFields(playerService.previousBand(), playerService.getOnAirData().getActualBandAlbums().get(0), playerService.getOnAirData().getActualAlbumTrackList().get(0));
         } else if (e.getSource() == nextAlbumBtn) {
-            labelActualAlbum.setText(playerService.giveNextAlbum());
-            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+            updateFields(playerService.giveNextAlbum(), playerService.getOnAirData().getActualAlbumTrackList().get(0));
         } else if (e.getSource() == prevAlbumBtn) {
-            labelActualAlbum.setText(playerService.givePreviousAlbum());
-            labelActualSong.setText(playerService.getOnAirData().getActualAlbumTrackList().get(0));
+            updateFields(playerService.givePreviousAlbum(), playerService.getOnAirData().getActualAlbumTrackList().get(0));
         } else if (e.getSource() == nextSongBtn) {
-            labelActualSong.setText(playerService.giveNextSong());
+            updateFields(playerService.giveNextSong());
         } else if (e.getSource() == prevSongBtn) {
-            labelActualSong.setText(playerService.givePreviousSong());
+            updateFields(playerService.givePreviousSong());
         } else if (e.getSource() == playBtn) {
-            String bandName = labelActualAuthor.getText();
-            String albumName = labelActualAlbum.getText();
-            String songName = labelActualSong.getText();
-            playerService.refreshOnAirData(bandName, albumName, songName);
+            playerService.refreshOnAirData(labelActualAuthor.getText(), labelActualAlbum.getText(), labelActualSong.getText());
             playerService.modifiedPlay();
 //        if(playerService.getOnAirData().hasNextSong())
 
@@ -116,6 +107,22 @@ public class MyController {
                 textfieldNewBand.setDisable(true);
                 choiceboxAddAuthor.setDisable(false);
             }
+        }
+    }
+    private void updateFields(String ... arg){
+        switch (arg.length){
+            case 1:
+                labelActualSong.setText(arg[0]);
+                break;
+            case 2:
+                labelActualAlbum.setText(arg[0]);
+                labelActualSong.setText(arg[1]);
+                break;
+            case 3:
+                labelActualAuthor.setText(arg[0]);
+                labelActualAlbum.setText(arg[1]);
+                labelActualSong.setText(arg[2]);
+                break;
         }
     }
 }
