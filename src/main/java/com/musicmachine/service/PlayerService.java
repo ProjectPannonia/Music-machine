@@ -59,7 +59,6 @@ public class PlayerService {
 
     public String nextBand() {
         String nextBand = onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());
-        ;
         if (onAirData.getRegisteredBandsIndex() + 1 < onAirData.getRegisteredBandsSize()) {
             nextBand = onAirData.getNextBandName();
             Long nextBandOnAirId = bandRepository.getIdByName(nextBand);
@@ -178,36 +177,17 @@ public class PlayerService {
         onAirData.setSongOnAirId(songId);
     }
 
-    public void play() {
-        Song song = songRepository.getSongBySongId(onAirData.getSongOnAirId());
-        try {
-            FileInputStream fileInputStream = new FileInputStream(song.getPathToSong());
-            player = new Player(fileInputStream);
-            Runnable runnable = () -> {
-                try {
-                    player.play();
-                } catch (JavaLayerException e) {
-                    e.printStackTrace();
-                }
-            };
-            playerThread = new Thread(runnable);
-            playerThread.start();
-        } catch (FileNotFoundException | JavaLayerException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void modifiedPlay() {
         stopSongOnAir();
         List<String> songnames = onAirData.getActualAlbumTrackList();
         List<String> songPaths = new ArrayList<>();
-
-        for(int i = 0; i < songnames.size(); i++){
-            songPaths.add(songRepository.getSongPathBySongName(songnames.get(i)));
-            System.out.println(songPaths.get(i));
-        }
-        testThread = new Thread(() -> playList(songPaths));
-        testThread.start();
+        System.out.println("On air data: " + onAirData.toString());
+//        for(int i = 0; i < songnames.size(); i++){
+//            songPaths.add(songRepository.getSongPathBySongName(songnames.get(i)));
+//            System.out.println(songPaths.get(i));
+//        }
+//        testThread = new Thread(() -> playList(songPaths));
+//        testThread.start();
     }
 
     private void playList(List<String> songPaths) {

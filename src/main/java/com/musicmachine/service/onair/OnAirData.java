@@ -190,5 +190,21 @@ public class OnAirData {
         this.songOnAirId = songOnAirId;
     }
 
-
+    @Override
+    public String toString() {
+        return "OnAirData{" +
+                "bandOnAirId=" + bandOnAirId +
+                ", registeredBands=" + registeredBands +
+                ", registeredBandsSize=" + registeredBandsSize +
+                ", registeredBandsIndex=" + registeredBandsIndex +
+                ", albumOnAirId=" + albumOnAirId +
+                ", actualBandAlbums=" + actualBandAlbums +
+                ", actualBandAlbumsSize=" + actualBandAlbumsSize +
+                ", actualBandAlbumsIndex=" + actualBandAlbumsIndex +
+                ", songOnAirId=" + songOnAirId +
+                ", actualAlbumTrackList=" + actualAlbumTrackList +
+                ", actualAlbumTrackListSize=" + actualAlbumTrackListSize +
+                ", actualAlbumTrackListIndex=" + actualAlbumTrackListIndex +
+                '}';
+    }
 }

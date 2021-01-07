@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Component
 @FxmlView("music-machine.fxml")
@@ -30,17 +32,14 @@ public class MyController {
     @FXML
     private Button nextBandBtn, prevBandBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn;
 
-    private Thread playThread;
-
+    private Timer timer;
     private PlayerService playerService;
     private RegisterService registerService;
-    private PlayerQuarterMasterService playerQuarterMasterService;
 
     @Autowired
-    public MyController(PlayerService playerService, RegisterService registerService, PlayerQuarterMasterService playerQuarterMasterService) {
+    public MyController(PlayerService playerService, RegisterService registerService) {
         this.playerService = playerService;
         this.registerService = registerService;
-        this.playerQuarterMasterService = playerQuarterMasterService;
     }
 
 
@@ -48,7 +47,13 @@ public class MyController {
         // Music service initialize
         playerService.initialize();
         initializeUserInterface();
-        playThread = new Thread();
+        timer = new Timer();
+//        timer.scheduleAtFixedRate(new TimerTask() {
+//            @Override
+//            public void run() {
+//                System.out.println("I would called every 2 seconds!");
+//            }
+//        },0,2000);
     }
     private void initializeUserInterface(){
         labelActualAuthor.setText(playerService.getOnAirData().giveFirstElement("author"));
