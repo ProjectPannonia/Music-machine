@@ -1,10 +1,10 @@
 package com.musicmachine.repository.entities;
 
+import com.sun.istack.NotNull;
+
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-//@Table(name = "Album")
 public class Album {
 
     @Id
@@ -12,18 +12,19 @@ public class Album {
     @Column(name = "ID")
     private Long id;
 
+    @NotNull
     @Column(name = "AlbumName")
     private String albumName;
 
+    @NotNull
     @Column(name = "AuthorId")
     private Long authorId;
 
-//    @ManyToOne
-//    private Author author;
+    @Column(name = "CoverBackPath")
+    private String coverBackPath;
 
-//    @OneToMany(mappedBy = "album")
-//    private List<Song> songs;
-
+    @Column(name = "CoverFrontPath")
+    private String coverFrontPath;
 
     public Album() {}
 
@@ -56,19 +57,19 @@ public class Album {
         this.authorId = authorId;
     }
 
-    //    public Author getAuthor() {
-//        return author;
-//    }
-//
-//    public void setAuthor(Author author) {
-//        this.author = author;
-//    }
-//
-//    public List<Song> getSongs() {
-//        return songs;
-//    }
-//
-//    public void setSongs(List<Song> songs) {
-//        this.songs = songs;
-//    }
+    public String getCoverBackPath() {
+        return coverBackPath;
+    }
+
+    public void setCoverBackPath(String coverBackPath) {
+        this.coverBackPath = coverBackPath;
+    }
+
+    public String getCoverFrontPath() {
+        return coverFrontPath;
+    }
+
+    public void setCoverFrontPath(String coverFrontPath) {
+        this.coverFrontPath = coverFrontPath;
+    }
 }
