@@ -26,7 +26,7 @@ public class MyController {
     @FXML
     private TextField textfieldNewBand, textfieldNewAlbumsName, textfieldNewAlbumPath;
     @FXML
-    private CheckBox newAuthorChb;
+    private CheckBox newAuthorChb,albumCoverCb;
     @FXML
     private Button nextBandBtn, prevBandBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn;
     @FXML
@@ -46,12 +46,6 @@ public class MyController {
     public void initialize() {
         // Music service initialize
         playerService.initialize();
-        labelActualAuthor.setText(playerService.getOnAirData().giveFirstElement("author"));
-        labelActualAlbum.setText(playerService.getOnAirData().giveFirstElement("album"));
-        labelActualSong.setText(playerService.getOnAirData().giveFirstElement("song"));
-        choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
-        textfieldNewBand.setDisable(true);
-        newAuthorChb.setSelected(false);
         initializeUserInterface();
         //timer = new Timer();
 //        timer.scheduleAtFixedRate(new TimerTask() {
@@ -61,9 +55,14 @@ public class MyController {
 //            }
 //        },0,2000);
     }
-
     private void initializeUserInterface() {
-
+        labelActualAuthor.setText(playerService.getOnAirData().giveFirstElement("author"));
+        labelActualAlbum.setText(playerService.getOnAirData().giveFirstElement("album"));
+        labelActualSong.setText(playerService.getOnAirData().giveFirstElement("song"));
+        choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
+        textfieldNewBand.setDisable(true);
+        newAuthorChb.setSelected(false);
+        albumCoverCb.setSelected(false);
     }
 
     @FXML
