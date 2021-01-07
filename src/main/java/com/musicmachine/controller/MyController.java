@@ -10,6 +10,7 @@ import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.swing.text.html.ImageView;
 import java.io.File;
 import java.util.Timer;
 
@@ -29,8 +30,10 @@ public class MyController {
     private CheckBox newAuthorChb;
     @FXML
     private Button nextBandBtn, prevBandBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn;
+    @FXML
+    private ImageView coverImgView;
 
-    private Timer timer;
+     private Timer timer;
     private PlayerService playerService;
     private RegisterService registerService;
 
@@ -45,7 +48,7 @@ public class MyController {
         // Music service initialize
         playerService.initialize();
         initializeUserInterface();
-        timer = new Timer();
+        //timer = new Timer();
 //        timer.scheduleAtFixedRate(new TimerTask() {
 //            @Override
 //            public void run() {
@@ -81,9 +84,9 @@ public class MyController {
             playerService.refreshOnAirData(labelActualAuthor.getText(), labelActualAlbum.getText(), labelActualSong.getText());
             playerService.continousPlay();
         } else if (e.getSource() == pauseBtn) {
-
+            playerService.pauseSongOnAir();
         } else if (e.getSource() == stopBtn) {
-
+            playerService.stopSongOnAir();
         } else if (e.getSource() == quitBtn) {
             registerService.exit();
         } else if (e.getSource() == saveBtn) {
@@ -96,8 +99,8 @@ public class MyController {
             }
             labelSaveResponse.setText(responseAfterSave);
         } else if (e.getSource() == browseAlbumBtn) {
-            DirectoryChooser dir = registerService.getDirectory();
-            File files = dir.showDialog(null);
+            //DirectoryChooser dir = registerService.getDirectory();
+            File files = registerService.getDirectory().showDialog(null);
             textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
         } else if (e.getSource() == newAuthorChb) {
             if (newAuthorChb.isSelected()) {

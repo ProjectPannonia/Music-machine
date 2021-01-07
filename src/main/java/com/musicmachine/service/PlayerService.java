@@ -213,7 +213,7 @@ public class PlayerService {
     }
 
 
-    private void stopSongOnAir() {
+    public void stopSongOnAir() {
         if (player != null) {
             player.close();
             playerThread.interrupt();
@@ -243,4 +243,7 @@ public class PlayerService {
     }
 
 
+    public void pauseSongOnAir() {
+        // TO-DO
+    }
 }
