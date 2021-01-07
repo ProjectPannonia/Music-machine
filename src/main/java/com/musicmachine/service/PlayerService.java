@@ -177,17 +177,14 @@ public class PlayerService {
         onAirData.setSongOnAirId(songId);
     }
 
-    public void modifiedPlay() {
+    public void continousPlay() {
         stopSongOnAir();
         List<String> songnames = onAirData.getActualAlbumTrackList();
-        List<String> songPaths = new ArrayList<>();
-        System.out.println("On air data: " + onAirData.toString());
-//        for(int i = 0; i < songnames.size(); i++){
-//            songPaths.add(songRepository.getSongPathBySongName(songnames.get(i)));
-//            System.out.println(songPaths.get(i));
-//        }
-//        testThread = new Thread(() -> playList(songPaths));
-//        testThread.start();
+        List<String> songPaths = songRepository.getAlbumSongsPathByAlbumId(onAirData.getAlbumOnAirId());
+        System.out.println("On air data: " + songPaths.toString());
+
+        testThread = new Thread(() -> playList(songPaths));
+        testThread.start();
     }
 
     private void playList(List<String> songPaths) {

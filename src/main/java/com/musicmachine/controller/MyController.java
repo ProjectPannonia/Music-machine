@@ -1,6 +1,5 @@
 package com.musicmachine.controller;
 
-import com.musicmachine.service.PlayerQuarterMasterService;
 import com.musicmachine.service.RegisterService;
 import com.musicmachine.service.PlayerService;
 import javafx.event.ActionEvent;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Timer;
-import java.util.TimerTask;
 
 @Component
 @FxmlView("music-machine.fxml")
@@ -81,7 +79,7 @@ public class MyController {
             updateFields(playerService.givePreviousSong());
         } else if (e.getSource() == playBtn) {
             playerService.refreshOnAirData(labelActualAuthor.getText(), labelActualAlbum.getText(), labelActualSong.getText());
-            playerService.modifiedPlay();
+            playerService.continousPlay();
         } else if (e.getSource() == pauseBtn) {
 
         } else if (e.getSource() == stopBtn) {
