@@ -135,7 +135,7 @@ public class MyController {
     }
 
     @FXML
-    public void handleQuit(ActionEvent e) {
+    public void handleQuit() {
         playerService.stopSongOnAir();
         registerService.exit();
     }
