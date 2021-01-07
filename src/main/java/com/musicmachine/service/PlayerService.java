@@ -168,7 +168,7 @@ public class PlayerService {
         onAirData.refreshRegisteredBandsIndex(bandName);
         onAirData.refreshActualBandAlbumsIndex(albumName);
         onAirData.refreshActualAlbumTrackListIndex(songName);
-
+        System.out.println("After refresh: " + onAirData.toString());
         Long bandId = bandRepository.getIdByName(bandName);
         onAirData.setBandOnAirId(bandId);
         Long albumId = albumRepository.getAlbumIdByName(albumName);
@@ -189,7 +189,7 @@ public class PlayerService {
 
     private void playList(List<String> songPaths) {
         FileInputStream fis;
-        for (int i = 0; i < songPaths.size(); i++){
+        for (int i = onAirData.getActualAlbumTrackListIndex(); i < songPaths.size(); i++){
             try {
                 fis = new FileInputStream(songPaths.get(i));
                 player = new Player(fis);
