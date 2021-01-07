@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.EventObject;
 
 @Component
 @FxmlView("music-machine.fxml")
@@ -29,7 +28,7 @@ public class MyController {
     @FXML
     private CheckBox newAuthorChb;
     @FXML
-    private Button nextAuthorBtn, prevAuthorBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn;
+    private Button nextBandBtn, prevBandBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn;
 
     private Thread playThread;
 
@@ -63,9 +62,9 @@ public class MyController {
 
     @FXML
     public void buttonHandler(ActionEvent e) {
-        if (e.getSource() == nextAuthorBtn) {
+        if (e.getSource() == nextBandBtn) {
             updateFields(playerService.nextBand(), playerService.getOnAirData().getActualBandAlbums().get(0), playerService.getOnAirData().getActualAlbumTrackList().get(0));
-        } else if (e.getSource() == prevAuthorBtn) {
+        } else if (e.getSource() == prevBandBtn) {
             updateFields(playerService.previousBand(), playerService.getOnAirData().getActualBandAlbums().get(0), playerService.getOnAirData().getActualAlbumTrackList().get(0));
         } else if (e.getSource() == nextAlbumBtn) {
             updateFields(playerService.giveNextAlbum(), playerService.getOnAirData().getActualAlbumTrackList().get(0));
@@ -78,8 +77,6 @@ public class MyController {
         } else if (e.getSource() == playBtn) {
             playerService.refreshOnAirData(labelActualAuthor.getText(), labelActualAlbum.getText(), labelActualSong.getText());
             playerService.modifiedPlay();
-//        if(playerService.getOnAirData().hasNextSong())
-
         } else if (e.getSource() == pauseBtn) {
 
         } else if (e.getSource() == stopBtn) {

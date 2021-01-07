@@ -51,7 +51,7 @@
                         </HBox>
                         <HBox prefHeight="63.0" prefWidth="1024.0">
                            <children>
-                              <Button fx:id="prevAuthorBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
+                              <Button fx:id="prevBandBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&lt;&lt;">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Button>
@@ -63,7 +63,7 @@
                                     <Insets left="5.0" right="5.0" />
                                  </HBox.margin>
                               </Label>
-                              <Button fx:id="nextAuthorBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
+                              <Button fx:id="nextBandBtn" mnemonicParsing="false" onAction="#buttonHandler" prefHeight="63.0" prefWidth="148.0" text="&gt;&gt;">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></Button>
