@@ -92,6 +92,7 @@ public class MyController {
         } else if (e.getSource() == stopBtn) {
             playerService.stopSongOnAir();
         } else if (e.getSource() == quitBtn) {
+            playerService.stopSongOnAir();
             registerService.exit();
         } else if (e.getSource() == saveBtn) {
             String responseAfterSave;
