@@ -129,7 +129,7 @@ public class RegisterService {
         Long albumId;
         System.out.println("album cover front path: " + albumCoverFrontPath + ", album cover back path: " + albumCoverBackPath);
 
-        createdAlbum = new Album(newAlbumName, authorId, albumCoverBackPath, albumCoverFrontPath);
+        createdAlbum = new Album(newAlbumName, authorId,  albumCoverFrontPath, albumCoverBackPath);
 
         albumRepository.save(createdAlbum);
         albumId = albumRepository.getAlbumIdByName(newAlbumName);
