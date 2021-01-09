@@ -26,7 +26,7 @@ public class MyController {
     @FXML
     private TextField textfieldNewBand, textfieldNewAlbumsName, textfieldNewAlbumPath, textfieldAlbumCoverFront, textfieldAlbumCoverBack;
     @FXML
-    private CheckBox newAuthorChb, albumCoverCb;
+    private CheckBox newAuthorChb, albumCoverFrontCb, albumCoverBackCb;
     @FXML
     private Button nextBandBtn, prevBandBtn, nextAlbumBtn, prevAlbumBtn, nextSongBtn, prevSongBtn, playBtn, pauseBtn, stopBtn, quitBtn, saveBtn, browseAlbumBtn, browseFrontCoverBtn, browseBackCoverBtn;
     @FXML
@@ -49,13 +49,21 @@ public class MyController {
     }
 
     private void initializeUserInterface() {
-        labelActualAuthor.setText(playerService.getOnAirData().giveFirstElement("author"));
-        labelActualAlbum.setText(playerService.getOnAirData().giveFirstElement("album"));
-        labelActualSong.setText(playerService.getOnAirData().giveFirstElement("song"));
-        choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
+        System.out.println(playerService.dbNotEmpty());
+        if (playerService.dbNotEmpty()) {
+            labelActualAuthor.setText(playerService.getOnAirData().giveFirstElement("author"));
+            labelActualAlbum.setText(playerService.getOnAirData().giveFirstElement("album"));
+            labelActualSong.setText(playerService.getOnAirData().giveFirstElement("song"));
+            choiceboxAddAuthor.setItems(registerService.getRegisteredAuthors());
+        }
         textfieldNewBand.setDisable(true);
         newAuthorChb.setSelected(false);
-        albumCoverCb.setSelected(false);
+        albumCoverFrontCb.setSelected(false);
+        textfieldAlbumCoverFront.setDisable(true);
+        albumCoverBackCb.setSelected(false);
+        browseFrontCoverBtn.setDisable(true);
+        textfieldAlbumCoverBack.setDisable(true);
+        browseBackCoverBtn.setDisable(true);
     }
 
     @FXML
@@ -86,6 +94,7 @@ public class MyController {
             updateFields(playerService.givePreviousSong());
         }
     }
+
     private void updateFields(String... arg) {
         switch (arg.length) {
             case 1:
@@ -105,32 +114,76 @@ public class MyController {
 
     @FXML
     public void handleRegister(ActionEvent e) {
+        File file;
         if (e.getSource() == saveBtn) {
-            String newBandName;
-            String newAlbumName;
-            String newAlbumPath;
-            String albumCoverFront;
-            String albumCoverBack;
+            String newBandName = newAuthorChb.isSelected() ? textfieldNewBand.getText() : choiceboxAddAuthor.getValue().toString();
+            String newAlbumName = textfieldNewAlbumsName.getText();
+            String newAlbumPath = textfieldNewAlbumPath.getText();
+            System.out.println("front cb is selected: " + albumCoverFrontCb.isSelected());
+            String albumCoverFront = albumCoverFrontCb.isSelected() ? textfieldAlbumCoverFront.getText() : null;
+            String albumCoverBack = albumCoverBackCb.isSelected() ? textfieldAlbumCoverBack.getText() : null;
 
-            String responseAfterSave;
+            String responseAfterSave = registerService.registerNewBand(newBandName, newAlbumName, newAlbumPath, albumCoverFront, albumCoverBack);
 
-            if (newAuthorChb.isSelected()) {
-                responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
-            } else {
-                responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
-            }
-            labelSaveResponse.setText(responseAfterSave);
+//            if (newAuthorChb.isSelected()) {
+//                responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+//            } else {
+//                responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
+//            }
+//            labelSaveResponse.setText(responseAfterSave);
         } else if (e.getSource() == browseAlbumBtn) {
-            File files = registerService.getDirectory().showDialog(null);
-            textfieldNewAlbumPath.setText(files.getAbsolutePath() + "\\");
-        } else if (e.getSource() == newAuthorChb) {
-            if (newAuthorChb.isSelected()) {
-                textfieldNewBand.setDisable(false);
-                choiceboxAddAuthor.setDisable(true);
-            } else {
-                textfieldNewBand.setDisable(true);
-                choiceboxAddAuthor.setDisable(false);
-            }
+            textfieldNewAlbumPath.setText(registerService.getDirectory().showDialog(null).getAbsolutePath() + "\\");
+        } else if (e.getSource() == browseFrontCoverBtn) {
+            textfieldAlbumCoverFront.setText(registerService.getFileChooser().showOpenDialog(null).getAbsolutePath() + "\\");
+        } else if (e.getSource() == browseBackCoverBtn) {
+            textfieldAlbumCoverBack.setText(registerService.getFileChooser().showOpenDialog(null).getAbsolutePath() + "\\");
+        } else if (e.getSource() == albumCoverFrontCb) {
+            textfieldAlbumCoverFront.setDisable(false);
+            browseFrontCoverBtn.setDisable(false);
+        } else if (e.getSource() == albumCoverBackCb) {
+            textfieldAlbumCoverBack.setDisable(false);
+            browseBackCoverBtn.setDisable(false);
+        }
+    }
+
+    @FXML
+    public void handleRegisterCheckboxes(ActionEvent e) {
+        if (e.getSource() == newAuthorChb) {
+            refreshFieldsWhenNewlyRegistered();
+        } else if (e.getSource() == albumCoverFrontCb) {
+            refreshFieldsFrontCover();
+        } else if (e.getSource() == albumCoverBackCb) {
+            refreshFieldBackCover();
+        }
+    }
+
+    private void refreshFieldsWhenNewlyRegistered() {
+        if (newAuthorChb.isSelected()) {
+            textfieldNewBand.setDisable(false);
+            choiceboxAddAuthor.setDisable(true);
+        } else {
+            textfieldNewBand.setDisable(true);
+            choiceboxAddAuthor.setDisable(false);
+        }
+    }
+
+    private void refreshFieldsFrontCover() {
+        if (albumCoverFrontCb.isSelected()) {
+            textfieldAlbumCoverFront.setDisable(false);
+            browseFrontCoverBtn.setDisable(false);
+        } else {
+            textfieldAlbumCoverFront.setDisable(true);
+            browseFrontCoverBtn.setDisable(true);
+        }
+    }
+
+    private void refreshFieldBackCover() {
+        if (albumCoverBackCb.isSelected()) {
+            textfieldAlbumCoverBack.setDisable(false);
+            browseBackCoverBtn.setDisable(false);
+        } else {
+            textfieldAlbumCoverBack.setDisable(true);
+            browseBackCoverBtn.setDisable(true);
         }
     }
 

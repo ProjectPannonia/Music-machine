@@ -162,7 +162,7 @@
                                           <Insets left="10.0" top="8.0" />
                                        </HBox.margin>
                                     </ChoiceBox>
-                                    <CheckBox fx:id="newAuthorChb" mnemonicParsing="false" onAction="#buttonHandler" text="New author">
+                                    <CheckBox fx:id="newAuthorChb" mnemonicParsing="false" onAction="#handleRegisterCheckboxes" text="New author">
                                        <HBox.margin>
                                           <Insets left="25.0" top="8.0" />
                                        </HBox.margin>
@@ -229,13 +229,21 @@
                                           <Font size="18.0" />
                                        </font>
                                     </Label>
-                                    <CheckBox fx:id="albumCoverCb" mnemonicParsing="false" text="Cover">
+                                    <CheckBox fx:id="albumCoverFrontCb" mnemonicParsing="false" onAction="#handleRegisterCheckboxes" text="Front cover">
                                        <HBox.margin>
                                           <Insets left="10.0" top="10.0" />
                                        </HBox.margin>
                                        <font>
                                           <Font size="14.0" />
                                        </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="albumCoverBackCb" mnemonicParsing="false" onAction="#handleRegisterCheckboxes" text="Back cover">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets left="10.0" top="10.0" />
+                                       </HBox.margin>
                                     </CheckBox>
                                  </children>
                               </HBox>

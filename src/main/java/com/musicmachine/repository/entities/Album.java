@@ -33,6 +33,13 @@ public class Album {
         this.authorId = authorId;
     }
 
+    public Album(String albumName, Long authorId, String coverFrontPath, String coverBackPath) {
+        this.albumName = albumName;
+        this.authorId = authorId;
+        this.coverBackPath = coverBackPath;
+        this.coverFrontPath = coverFrontPath;
+    }
+
     public Long getId() {
         return id;
     }

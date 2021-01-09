@@ -249,4 +249,8 @@ public class PlayerService {
     public void pauseSongOnAir() {
         // TO-DO
     }
+
+    public boolean dbNotEmpty() {
+        return bandRepository.findAll().size() != 0;
+    }
 }
