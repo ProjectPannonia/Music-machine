@@ -140,18 +140,18 @@ public class RegisterService {
     }
 
 
-//    public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath) {
-//        String saveResponse = "Invalid data";
-//        Long authorId = bandRepository.getIdByName(authorName);
-//        boolean isAlbumExist = checkAlbumNameInDb(newAlbumName);
-//        if (!isAlbumExist) {
-//            albumRepository.save(new Album(newAlbumName, authorId));
-//            Long savedAlbumId = albumRepository.getAlbumIdByName(newAlbumName);
-//            readMusicFiles(savedAlbumId, newAlbumPath);
-//            saveResponse = newAlbumName + " saved.";
-//        }
-//        return saveResponse;
-//    }
+    public String saveNewAlbumForAuthor(String authorName, String newAlbumName, String newAlbumPath, String coverPathFront, String coverPathBack) {
+        String saveResponse = "Invalid data";
+        Long authorId = bandRepository.getIdByName(authorName);
+        boolean isAlbumExist = checkAlbumNameInDb(newAlbumName);
+        if (!isAlbumExist) {
+            albumRepository.save(new Album(newAlbumName, authorId, coverPathFront, coverPathBack));
+            Long savedAlbumId = albumRepository.getAlbumIdByName(newAlbumName);
+            readMusicFiles(savedAlbumId, newAlbumPath);
+            saveResponse = newAlbumName + " saved.";
+        }
+        return saveResponse;
+    }
 
     private void readMusicFiles(Long albumId, String albumsPath) {
         File[] filesInFolder = new File(albumsPath).listFiles();

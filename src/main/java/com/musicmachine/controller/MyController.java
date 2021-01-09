@@ -114,23 +114,23 @@ public class MyController {
 
     @FXML
     public void handleRegister(ActionEvent e) {
-        File file;
         if (e.getSource() == saveBtn) {
-            String newBandName = newAuthorChb.isSelected() ? textfieldNewBand.getText() : choiceboxAddAuthor.getValue().toString();
             String newAlbumName = textfieldNewAlbumsName.getText();
             String newAlbumPath = textfieldNewAlbumPath.getText();
             System.out.println("front cb is selected: " + albumCoverFrontCb.isSelected());
             String albumCoverFront = albumCoverFrontCb.isSelected() ? textfieldAlbumCoverFront.getText() : null;
             String albumCoverBack = albumCoverBackCb.isSelected() ? textfieldAlbumCoverBack.getText() : null;
 
-            String responseAfterSave = registerService.registerNewBand(newBandName, newAlbumName, newAlbumPath, albumCoverFront, albumCoverBack);
+            String responseAfterSave = registerService.registerNewBand(newAuthorChb.isSelected() ? textfieldNewBand.getText() : choiceboxAddAuthor.getValue().toString(),
+                    newAlbumName, newAlbumPath, albumCoverFront, albumCoverBack);;
 
-//            if (newAuthorChb.isSelected()) {
+            if (newAuthorChb.isSelected()) {
 //                responseAfterSave = registerService.saveNewAuthor(textfieldNewBand.getText(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
-//            } else {
-//                responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText());
-//            }
-//            labelSaveResponse.setText(responseAfterSave);
+                registerService.registerNewBand(textfieldNewBand.getText(), newAlbumName, newAlbumPath, albumCoverFront, albumCoverBack);
+            } else {
+                responseAfterSave = registerService.saveNewAlbumForAuthor(choiceboxAddAuthor.getValue().toString(), textfieldNewAlbumsName.getText(), textfieldNewAlbumPath.getText(), albumCoverFront, albumCoverBack);
+            }
+            labelSaveResponse.setText(responseAfterSave);
         } else if (e.getSource() == browseAlbumBtn) {
             textfieldNewAlbumPath.setText(registerService.getDirectory().showDialog(null).getAbsolutePath() + "\\");
         } else if (e.getSource() == browseFrontCoverBtn) {
