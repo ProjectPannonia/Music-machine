@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,46 +28,14 @@ public class RegisterService {
 
     private Long actualAuthorCounter;
     private Long actualAlbumCounter;
+    private boolean successfullyRegistered;
 
-
-    private int actualAuthorsIndex;
 
     @Autowired
     public RegisterService(BandRepository bandRepository, AlbumRepository albumRepository, SongRepository songRepository) {
         this.bandRepository = bandRepository;
         this.albumRepository = albumRepository;
         this.songRepository = songRepository;
-    }
-
-    private List<String> registeredAuthors;
-    private int registeredAuthorsSize;
-    private int authorOnAirIndex;
-
-    public void initialize() {
-        registeredAuthors = bandRepository.getAllAuthorNames();
-        registeredAuthorsSize = registeredAuthors.size();
-        authorOnAirIndex = 0;
-    }
-
-    public String getFirstBandName() {
-        String firstBandName = "Database empty";
-
-        if (bandRepository.count() > 0) firstBandName = registeredAuthors.get(0);
-
-        return firstBandName;
-    }
-
-    public String getFirstAlbumFromThisAuthor(String actualAuthorName) {
-        Long authorId = bandRepository.getIdByName(actualAuthorName);
-        List<String> albumNamesForThisAuthor = albumRepository.findAlbumsByAuthorId(authorId);
-        System.out.println(albumNamesForThisAuthor.size());
-        return albumNamesForThisAuthor.get(0);
-    }
-
-    public String getFirstSongfFromAlbum(String actualAlbumName) {
-        Long albumId = albumRepository.getAlbumIdByName(actualAlbumName);
-        List<String> songs = songRepository.getSongsByAlbumId(albumId);
-        return songs.get(0);
     }
 
     public DirectoryChooser getDirectory() {
@@ -85,33 +54,31 @@ public class RegisterService {
         return FXCollections.observableArrayList(registeredAuthorNames);
     }
 
-//    public String saveNewAuthor(String newAuthorName, String newAlbumName, String newAlbumPath) {
-//        String response;
-//        Author searchAuthorInDb = bandRepository.findByName(newAuthorName);
-//        if (searchAuthorInDb == null) {
-//            System.out.println("New author");
-//            bandRepository.save(new Author(newAuthorName));
-//            Long createdId = bandRepository.getIdByName(newAuthorName);
-//            createAndSaveAlbum(newAlbumName, createdId, newAlbumPath);
-//
-//            System.out.println("Created id: " + createdId.toString());
-//            response = "New author saved";
-//        } else {
-//            response = "This author already exist!";
-//        }
-//        return response;
-//    }
-
     public String registerNewBand(String newBandName, String newAlbumName, String newAlbumPath, String albumCoverFront, String albumCoverBack) {
-        boolean newAuthor = bandRepository.findByName(newBandName) == null ? true : false;
         String responseAfterSave;
-
-        if (!newAuthor)
+        if (bandRepository.findByName(newBandName) == null ? true : false) {
+            if (checkAlbumFilesIsMp3(newAlbumPath)) {
+                responseAfterSave = saveNewBand(newBandName, newAlbumName, newAlbumPath, albumCoverFront, albumCoverBack);
+            } else {
+                responseAfterSave = "Unsupported format! Supported formats: MP3 & WAV";
+            }
+        } else {
             responseAfterSave = "Band with name: " + newBandName + " is already exit!";
-        else responseAfterSave =
-                saveNewBand(newBandName, newAlbumName, newAlbumPath, albumCoverFront, albumCoverBack);
-
+        }
         return responseAfterSave;
+    }
+
+    public boolean checkAlbumFilesIsMp3(String albumPath) {
+        File file = new File(albumPath);
+        File[] albumFiles = file.listFiles();
+        List<String> filePaths = new ArrayList<>();
+        for (File f : albumFiles) {
+            if (isMusicFile(f.getAbsolutePath())) {
+                filePaths.add(f.getAbsolutePath());
+            }
+        }
+
+        return filePaths.size() > 0;
     }
 
     private String saveNewBand(String newBandName, String newAlbumName, String newAlbumPath, String albumCoverFront, String albumCoverBack) {
@@ -119,7 +86,7 @@ public class RegisterService {
 
         bandRepository.save(new Author(newBandName));
         createdBandId = bandRepository.getIdByName(newBandName);
-        createAndSaveAlbum(newAlbumName, createdBandId, newAlbumPath, albumCoverFront,albumCoverBack);
+        createAndSaveAlbum(newAlbumName, createdBandId, newAlbumPath, albumCoverFront, albumCoverBack);
 
         return createdBandId != null ? "Created!" : "Problem when creating!";
     }
@@ -129,7 +96,7 @@ public class RegisterService {
         Long albumId;
         System.out.println("album cover front path: " + albumCoverFrontPath + ", album cover back path: " + albumCoverBackPath);
 
-        createdAlbum = new Album(newAlbumName, authorId,  albumCoverFrontPath, albumCoverBackPath);
+        createdAlbum = new Album(newAlbumName, authorId, albumCoverFrontPath, albumCoverBackPath);
 
         albumRepository.save(createdAlbum);
         albumId = albumRepository.getAlbumIdByName(newAlbumName);
@@ -149,6 +116,9 @@ public class RegisterService {
             Long savedAlbumId = albumRepository.getAlbumIdByName(newAlbumName);
             readMusicFiles(savedAlbumId, newAlbumPath);
             saveResponse = newAlbumName + " saved.";
+            successfullyRegistered = true;
+        } else {
+            successfullyRegistered = false;
         }
         return saveResponse;
     }
@@ -162,6 +132,7 @@ public class RegisterService {
                 songRepository.save(song);
             }
         }
+        successfullyRegistered = true;
     }
 
     private boolean checkAlbumNameInDb(String newAlbumName) {
@@ -186,26 +157,11 @@ public class RegisterService {
         return itIsMusicFile;
     }
 
-
-    public void exit() {
-        Platform.exit();
+    public boolean isSuccessfullyRegistered() {
+        return successfullyRegistered;
     }
 
-    public Long getActualAuthorCounter() {
-        return actualAuthorCounter;
+    public void setSuccessfullyRegistered(boolean successfullyRegistered) {
+        this.successfullyRegistered = successfullyRegistered;
     }
-
-    public void setActualAuthorCounter(Long actualAuthorCounter) {
-        this.actualAuthorCounter = actualAuthorCounter;
-    }
-
-    public Long getActualAlbumCounter() {
-        return actualAlbumCounter;
-    }
-
-    public void setActualAlbumCounter(Long actualAlbumCounter) {
-        this.actualAlbumCounter = actualAlbumCounter;
-    }
-
-
 }

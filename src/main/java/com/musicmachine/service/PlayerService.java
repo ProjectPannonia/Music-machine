@@ -4,6 +4,7 @@ import com.musicmachine.repository.AlbumRepository;
 import com.musicmachine.repository.BandRepository;
 import com.musicmachine.repository.SongRepository;
 import com.musicmachine.service.onair.OnAirData;
+import javafx.application.Platform;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,20 +50,21 @@ public class PlayerService {
                 // -> set albumOnAirId
                 onAirData.setAlbumOnAirId(albumRepository.getAlbumIdByName(onAirData.giveFirstElement("album")));
                 onAirData.setActualAlbumTrackList(songRepository.getSongsByAlbumId(onAirData.getAlbumOnAirId()));
-                if (!onAirData.getActualAlbumTrackList().isEmpty())
+                if (!onAirData.getActualAlbumTrackList().isEmpty()) {
                     onAirData.setActualAlbumTrackListIndex(0);
+                    onAirData.setSongOnAirId(songRepository.getSongIDBySongName(onAirData.getAlbumOnAirId(), onAirData.getActualAlbumTrackList().get(0)));
+                }
             }
         }
     }
 
     public String nextBand() {
-        String nextBand = onAirData.getRegisteredBands().get(onAirData.getRegisteredBandsIndex());
-        if (onAirData.getRegisteredBandsIndex() + 1 < onAirData.getRegisteredBandsSize()) {
-            nextBand = onAirData.getNextBandName();
-            Long nextBandOnAirId = bandRepository.getIdByName(nextBand);
-            onAirData.setBandOnAirId(nextBandOnAirId);
-            refreshBandAlbumList(nextBandOnAirId);
-        }
+        String nextBand;
+        System.out.println("Band index + 1: " + onAirData.getRegisteredBandsIndex() + 1 + ", band list size: " + onAirData.getRegisteredBands().size());
+        nextBand = onAirData.getNextBandName();
+        Long nextBandOnAirId = bandRepository.getIdByName(nextBand);
+        onAirData.setBandOnAirId(nextBandOnAirId);
+        refreshBandAlbumList(nextBandOnAirId);
         return nextBand;
     }
 
@@ -83,11 +85,13 @@ public class PlayerService {
         onAirData.setActualBandAlbumsSize(bandAlbums.size());
         onAirData.setActualBandAlbumsIndex(0);
         Long firstAlbumId = albumRepository.getAlbumIdByName(bandAlbums.get(0));
+        System.out.println("Első album:" + bandAlbums.get(0) + ", első album id: " + firstAlbumId);
         refreshAlbumSongList(firstAlbumId);
     }
 
     private void refreshAlbumSongList(Long firstAlbumId) {
         List<String> songsOnAlbum = songRepository.getSongsByAlbumId(firstAlbumId);
+        System.out.println("Dal lista: " + songsOnAlbum);
         onAirData.setActualAlbumTrackList(songsOnAlbum);
         onAirData.setActualAlbumTrackListSize(songsOnAlbum.size());
         onAirData.setActualAlbumTrackListIndex(0);
@@ -180,6 +184,7 @@ public class PlayerService {
         broadcastThread = new Thread(() -> modifiedPlayList(songRepository.getAlbumSongsPathByAlbumId(onAirData.getAlbumOnAirId())));
         broadcastThread.start();
     }
+
     private void modifiedPlayList(List<String> songPaths) {
         for (int i = onAirData.getActualAlbumTrackListIndex(); i < songPaths.size(); i++) {
             try {
@@ -206,12 +211,14 @@ public class PlayerService {
         playerThread.start();
         sleepPlayer();
     }
+
     private void sleepPlayer() throws InterruptedException {
         do {
             Thread.sleep(2000);
             System.out.println("Slow");
         } while (!player.isComplete());
     }
+
     public void stopSongOnAir() {
         if (player != null && playerThread.isAlive() && broadcastThread.isAlive()) {
             player.close();
@@ -220,8 +227,6 @@ public class PlayerService {
             broadcastThread.stop();
         }
     }
-
-
 
 
     // Getters and setters
@@ -252,5 +257,8 @@ public class PlayerService {
 
     public boolean dbNotEmpty() {
         return bandRepository.findAll().size() != 0;
+    }
+    public void exit() {
+        Platform.exit();
     }
 }

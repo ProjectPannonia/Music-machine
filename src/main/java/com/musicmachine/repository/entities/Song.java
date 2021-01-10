@@ -3,7 +3,6 @@ package com.musicmachine.repository.entities;
 import javax.persistence.*;
 
 @Entity
-//@Table(name = "Song")
 public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,9 +17,6 @@ public class Song {
 
     @Column(name = "AlbumId")
     private Long albumId;
-
-//    @ManyToOne
-//    private Album album;
 
     public Song() {}
 

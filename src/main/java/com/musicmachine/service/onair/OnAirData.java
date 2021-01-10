@@ -158,6 +158,7 @@ public class OnAirData {
     }
 
     public List<String> getActualAlbumTrackList() {
+        System.out.println(actualAlbumTrackList);
         return actualAlbumTrackList;
     }
 
